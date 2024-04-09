@@ -13,12 +13,8 @@
           packages = [
             python311
             sqlite
-            python311Packages.fastapi
-            python311Packages.streamlit
-
+            poetry
             ruff
-            python311Packages.pytest
-            python311Packages.bandit
             nodePackages.pyright
           ];
         };
