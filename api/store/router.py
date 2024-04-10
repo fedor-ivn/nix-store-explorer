@@ -15,6 +15,12 @@ def create_store(store_request: StoreRequest = Body(...)):
     return store
 
 
+@router.get("/{name}", response_model=Store)
+def get_store(name: str):
+    store = Store(id=1, name=name, owner_id=1)
+    return store
+
+
 @router.delete("/{name}", response_model=Store)
 def delete_store(name: str):
     store = Store(id=1, name=name, owner_id=1)
