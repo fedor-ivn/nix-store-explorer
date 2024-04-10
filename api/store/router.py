@@ -71,9 +71,14 @@ def get_closures_difference_same_store(store_name: str, package_name: str, other
 
 
 @router.get(
-    "/{store_name}/package/{package_name}/closure-difference/{other_package_name}",
+    "/{store_name}/package/{package_name}/closure-difference/{other_store_name}/{other_package_name}",
     response_model=ClosuresDifference)
-def get_closures_difference(store_name: str, package_name: str, other_package_name: str):
+def get_closures_difference_different_stores(
+        store_name: str, package_name: str, other_store_name: str, other_package_name: str):
+    """
+    Closure difference for packages from the different stores
+    """
+
     closures_difference = ClosuresDifference(difference=[
         PackageChange(
             package_name="python",
