@@ -26,13 +26,13 @@ def get_owner(store_id: int):
     return User(id=1)
 
 
-@router.post("/{name}/package", response_model=Package)
+@router.post("/{store_name}/package", response_model=Package)
 def add_package(store_name: str, package_request: PackageRequest = Body(...)):
     package = Package(id=1, name=package_request.name, store_id=1, closure=Closure())
     return package
 
 
-@router.delete("/{name}/package", response_model=Package)
+@router.delete("/{store_name}/package", response_model=Package)
 def delete_package(store_name: str, package_request: PackageRequest = Body(...)):
     package = Package(id=1, name=package_request.name, store_id=1, closure=Closure())
     return package
