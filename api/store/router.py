@@ -38,8 +38,8 @@ def delete_package(store_name: str, package_name: str):
     return package
 
 
-@router.get("/paths_difference", response_model=PathsDifference)
-def get_paths_difference(store_1_id: int, store_2_id: int):
+@router.get("/{store_name}/difference/{other_store_name}", response_model=PathsDifference)
+def get_paths_difference(store_name: str, other_store_name: str):
     paths_difference = PathsDifference(difference=["/nix/store/1", "/nix/store/2"])
     return paths_difference
 
