@@ -44,8 +44,10 @@ def get_paths_difference(store_name: str, other_store_name: str):
     return paths_difference
 
 
-@router.get("/closures_difference", response_model=ClosuresDifference)
-def get_closures_difference(package_1_id: int, package_2_id: int):
+@router.get(
+    "/{store_name}/package/{package_name}/closure-difference/{other_package_name}",
+    response_model=ClosuresDifference)
+def get_closures_difference(store_name: str, package_name: str, other_package_name: str):
     closures_difference = ClosuresDifference(difference=[
         PackageChange(
             package_name="python",
