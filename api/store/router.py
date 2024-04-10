@@ -15,9 +15,9 @@ def create_store(store_request: StoreRequest = Body(...)):
     return store
 
 
-@router.delete("/delete", response_model=Store)
-def delete_store(store_request: StoreRequest = Body(...)):
-    store = Store(id=1, name=store_request.name, owner_id=1)
+@router.delete("/{name}", response_model=Store)
+def delete_store(name: str):
+    store = Store(id=1, name=name, owner_id=1)
     return store
 
 
