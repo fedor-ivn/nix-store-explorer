@@ -6,11 +6,6 @@ class PackageRequest(BaseModel):
     store_id: int
 
 
-class PackagePresenceRequest(BaseModel):
-    store_name: str
-    package_name: str
-
-
 class PackageMeta(BaseModel):
     present: bool
     closure_size: int
