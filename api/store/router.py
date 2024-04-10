@@ -67,6 +67,6 @@ def get_closure_size(package_id: int):
     return closure_size
 
 
-@router.get("/package_presence", response_model=PackagePresence)
-def get_package_presence(store_id: int, package_id: int):
+@router.get("/{store_name}/package/{package_name}", response_model=PackagePresence)
+def get_package_presence(store_name: str, package_name: str):
     return PackagePresence(present=True)
