@@ -66,12 +66,6 @@ def get_closures_difference(store_name: str, package_name: str, other_package_na
     return closures_difference
 
 
-@router.get("/{store_name}/package/{package_name}/closure_size", response_model=ClosureSize)
-def get_closure_size(store_name: str, package_name: str):
-    closure_size = ClosureSize(size=5)
-    return closure_size
-
-
 @router.get("/{store_name}/package/{package_name}", response_model=PackageMeta)
 def get_package_meta(store_name: str, package_name: str):
     return PackageMeta(present=True, closure_size=3)
