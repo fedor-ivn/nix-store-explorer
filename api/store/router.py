@@ -61,8 +61,8 @@ def get_closures_difference(package_1_id: int, package_2_id: int):
     return closures_difference
 
 
-@router.get("/closure_size", response_model=ClosureSize)
-def get_closure_size(package_id: int):
+@router.get("/{store_name}/package/{package_name}/closure_size", response_model=ClosureSize)
+def get_closure_size(store_name: str, package_name: str):
     closure_size = ClosureSize(size=5)
     return closure_size
 
