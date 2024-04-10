@@ -32,8 +32,8 @@ def add_package(store_name: str, package_request: PackageRequest = Body(...)):
     return package
 
 
-@router.delete("/package", response_model=Package)
-def delete_package(package_request: PackageRequest = Body(...)):
+@router.delete("/{name}/package", response_model=Package)
+def delete_package(store_name: str, package_request: PackageRequest = Body(...)):
     package = Package(id=1, name=package_request.name, store_id=1, closure=Closure())
     return package
 
