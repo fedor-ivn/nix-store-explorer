@@ -7,4 +7,5 @@ class PathsDifferenceRequest(BaseModel):
 
 
 class PathsDifference(BaseModel):
-    difference: list[str]
+    absent_in_store_1: list[str]
+    absent_in_store_2: list[str]
