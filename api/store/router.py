@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Body
 
-from auth.models.user import User
 from store.models.path import PathsDifference
 from store.models.store import StoreRequest, Store
 from store.models.closure import ClosuresDifference, ClosureSize, Closure
