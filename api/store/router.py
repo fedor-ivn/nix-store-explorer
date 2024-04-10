@@ -9,7 +9,7 @@ from store.models.package import PackageRequest, PackagePresence, Package
 router = APIRouter(prefix="/store")
 
 
-@router.post("/create", response_model=Store)
+@router.post("", response_model=Store)
 def create_store(store_request: StoreRequest = Body(...)):
     store = Store(id=1, name=store_request.name, owner_id=1)
     return store
