@@ -50,6 +50,29 @@ def get_paths_difference(store_name: str, other_store_name: str):
 @router.get(
     "/{store_name}/package/{package_name}/closure-difference/{other_package_name}",
     response_model=ClosuresDifference)
+def get_closures_difference_same_store(store_name: str, package_name: str, other_package_name: str):
+    """
+    Closure difference for packages from the same store
+    """
+
+    closures_difference = ClosuresDifference(difference=[
+        PackageChange(
+            package_name="python",
+            version_update=VersionUpdate(old="3.11", new="3.12"),
+            size_update="+1.4 MiB"
+        ),
+        PackageChange(
+            package_name="node",
+            version_update=VersionUpdate(old="v20.11", new="v20.12.1"),
+            size_update="+14.1 MiB"
+        ),
+    ])
+    return closures_difference
+
+
+@router.get(
+    "/{store_name}/package/{package_name}/closure-difference/{other_package_name}",
+    response_model=ClosuresDifference)
 def get_closures_difference(store_name: str, package_name: str, other_package_name: str):
     closures_difference = ClosuresDifference(difference=[
         PackageChange(
