@@ -1,5 +1,7 @@
 from pathlib import Path
 from shutil import rmtree
+from subprocess import run
+import json
 
 
 def create_store(store: Path):
@@ -16,3 +18,24 @@ def remove_store(store: Path):
         function(path)
 
     rmtree(store, onerror=handle_permission_error)
+
+
+def install_package(store: Path, package_name: str):
+    process = run(
+        [
+            "nix",
+            "build",
+            "--json",
+            "--no-link",
+            "--store",
+            str(store),
+            f"nixpkgs#{package_name}",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    process.check_returncode()
+
+    output = json.loads(process.stdout)
+    path = output[0]["outputs"]["out"]
+    return path
