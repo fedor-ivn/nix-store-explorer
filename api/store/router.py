@@ -3,7 +3,7 @@ from fastapi import APIRouter, Body
 from store.models.path import PathsDifference
 from store.models.store import StoreRequest, Store
 from store.models.closure import ClosuresDifference, ClosureSize, Closure
-from store.models.package import PackageRequest, PackagePresence, Package, PackageChange, VersionUpdate
+from store.models.package import PackageRequest, PackageMeta, Package, PackageChange, VersionUpdate
 
 router = APIRouter(prefix="/store")
 
@@ -69,6 +69,6 @@ def get_closure_size(store_name: str, package_name: str):
     return closure_size
 
 
-@router.get("/{store_name}/package/{package_name}", response_model=PackagePresence)
-def get_package_presence(store_name: str, package_name: str):
-    return PackagePresence(present=True)
+@router.get("/{store_name}/package/{package_name}", response_model=PackageMeta)
+def get_package_meta(store_name: str, package_name: str):
+    return PackageMeta(present=True, closure_size=3)

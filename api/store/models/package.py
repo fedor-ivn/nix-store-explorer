@@ -11,8 +11,9 @@ class PackagePresenceRequest(BaseModel):
     package_name: str
 
 
-class PackagePresence(BaseModel):
+class PackageMeta(BaseModel):
     present: bool
+    closure_size: int
 
 
 class Package(BaseModel):
