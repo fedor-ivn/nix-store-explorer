@@ -39,3 +39,14 @@ def install_package(store: Path, package_name: str):
     output = json.loads(process.stdout)
     path = output[0]["outputs"]["out"]
     return path
+
+
+def remove_package(store: Path, package_name: str):
+    process = run(
+        ["nix", "store", "delete", "--store", str(store), f"nixpkgs#{package_name}"],
+        capture_output=True,
+        text=True,
+    )
+    if process.stderr:
+        raise Exception(process.stderr)
+    process.check_returncode()
