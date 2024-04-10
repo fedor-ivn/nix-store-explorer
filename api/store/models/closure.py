@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from store.models.package import Package
+from store.models.package import Package, PackageChange
 
 
 class Closure(BaseModel):
@@ -8,7 +8,7 @@ class Closure(BaseModel):
 
 
 class ClosuresDifference(BaseModel):
-    difference: list[Package]
+    difference: list[PackageChange]
 
 
 class ClosuresDifferenceRequest(BaseModel):

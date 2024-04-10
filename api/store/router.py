@@ -4,7 +4,7 @@ from auth.models.user import User
 from store.models.path import PathsDifference
 from store.models.store import StoreRequest, Store
 from store.models.closure import ClosuresDifference, ClosureSize, Closure
-from store.models.package import PackageRequest, PackagePresence, Package
+from store.models.package import PackageRequest, PackagePresence, Package, PackageChange, VersionUpdate
 
 router = APIRouter(prefix="/store")
 
@@ -47,18 +47,16 @@ def get_paths_difference(store_1_id: int, store_2_id: int):
 @router.get("/closures_difference", response_model=ClosuresDifference)
 def get_closures_difference(package_1_id: int, package_2_id: int):
     closures_difference = ClosuresDifference(difference=[
-        Package(
-            id=1,
-            name="python",
-            store_id=1,
-            closure=Closure()
+        PackageChange(
+            package_name="python",
+            version_update=VersionUpdate(old="3.11", new="3.12"),
+            size_update="+1.4 MiB"
         ),
-        Package(
-            id=2,
-            name="nodejs",
-            store_id=2,
-            closure=Closure()
-        )
+        PackageChange(
+            package_name="node",
+            version_update=VersionUpdate(old="v20.11", new="v20.12.1"),
+            size_update="+14.1 MiB"
+        ),
     ])
     return closures_difference
 

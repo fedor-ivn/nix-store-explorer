@@ -20,3 +20,14 @@ class Package(BaseModel):
     name: str
     store_id: int
     closure: "Closure"
+
+
+class VersionUpdate(BaseModel):
+    old: str
+    new: str
+
+
+class PackageChange(BaseModel):
+    package_name: str
+    version_update: VersionUpdate
+    size_update: str
