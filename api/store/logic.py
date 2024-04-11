@@ -20,6 +20,14 @@ def remove_store(store: Path):
     rmtree(store, onerror=handle_permission_error)
 
 
+def get_paths(store: Path):
+    return set(
+        f"/nix/store/{path.name}"
+        for path in (store / "nix/store").iterdir()
+        if path.name != ".links"
+    )
+
+
 def install_package(store: Path, package_name: str):
     process = run(
         [
