@@ -60,6 +60,11 @@ def remove_package(store: Path, package_name: str):
     process.check_returncode()
 
 
+def _check_paths_are_valid(output, package_name: str):
+    if any(not path["valid"] for path in output):
+        raise Exception(f"Package nixpkgs#{package_name} is not installed")
+
+
 def get_closure_size(store: Path, package_name: str):
     process = run(
         [
@@ -77,8 +82,29 @@ def get_closure_size(store: Path, package_name: str):
     process.check_returncode()
 
     output = json.loads(process.stdout)
-    if any(not path["valid"] for path in output):
-        raise Exception(f"Package nixpkgs#{package_name} is not installed")
+    _check_paths_are_valid(output, package_name)
 
     closure_size = sum(path["closureSize"] for path in output)
     return closure_size
+
+
+def get_closure(store: Path, package_name: str):
+    process = run(
+        [
+            "nix",
+            "path-info",
+            "--json",
+            "--store",
+            str(store),
+            "--recursive",
+            f"nixpkgs#{package_name}",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    process.check_returncode()
+
+    output = json.loads(process.stdout)
+    _check_paths_are_valid(output, package_name)
+
+    return set(path["path"] for path in output)
