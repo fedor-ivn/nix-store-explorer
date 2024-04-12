@@ -16,5 +16,5 @@ SECRET = os.getenv("SECRET", "default_secret")
 auth_backend = AuthenticationBackend(
     name="jwt",
     transport=cookie_transport,
-    get_strategy= lambda: JWTStrategy(secret=SECRET, lifetime_seconds=3600),
+    get_strategy=lambda: JWTStrategy(secret=SECRET, lifetime_seconds=3600),
 )
