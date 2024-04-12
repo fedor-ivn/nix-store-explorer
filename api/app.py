@@ -34,4 +34,4 @@ app.include_router(
 if __name__ == "__main__":
     asyncio.run(create_db_and_tables())
 
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="localhost", port=8000, reload=True)
