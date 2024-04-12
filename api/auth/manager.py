@@ -1,11 +1,12 @@
 from typing import Optional
+import os
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin
 
 from auth.database import User, get_user_db
 
-SECRET = "SECRET"
+SECRET = os.getenv("SECRET", "default_secret")
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
