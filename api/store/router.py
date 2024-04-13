@@ -2,8 +2,8 @@ from fastapi import APIRouter, Body
 
 from store.models.path import PathsDifference
 from store.models.store import StoreRequest, Store
-from store.models.closure import ClosuresDifference, ClosureSize, Closure
-from store.models.package import PackageRequest, PackageMeta, Package, PackageChange, VersionUpdate
+from store.models.package import PackageRequest, PackageMeta, Package, PackageChange, VersionUpdate, Closure, \
+    ClosuresDifference, ClosureSize
 
 router = APIRouter(prefix="/store")
 
