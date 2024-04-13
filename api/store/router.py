@@ -3,7 +3,7 @@ from fastapi import APIRouter, Body
 from store.models.path import PathsDifference
 from store.models.store import StoreRequest, Store
 from store.models.package import PackageRequest, PackageMeta, Package, PackageChange, VersionUpdate, Closure, \
-    ClosuresDifference, ClosureSize
+    ClosuresDifference
 
 router = APIRouter(prefix="/store")
 
