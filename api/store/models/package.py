@@ -27,3 +27,15 @@ class PackageChange(BaseModel):
     package_name: str
     version_update: VersionUpdate
     size_update: str
+
+
+class Closure(BaseModel):
+    packages: list["Package"] = []
+
+
+class ClosuresDifference(BaseModel):
+    difference: list[PackageChange]
+
+
+class ClosureSize(BaseModel):
+    size: int
