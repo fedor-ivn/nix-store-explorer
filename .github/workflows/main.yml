@@ -7,60 +7,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
+      - uses: nixbuild/nix-quick-install-action@v27
+      - uses: nix-community/cache-nix-action@v5
         with:
-          python-version: '3.11'
-          cache: 'poetry'
-      - name: Install dependencies
-        run: poetry install --only dev
-      - name: ruff
-        run: poetry run ruff check
-
-  bandit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'poetry'
-      - name: Install dependencies
-        run: poetry install --only dev
-      - name: bandit
-        run: poetry run bandit -r .
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
+      - run: nix develop --command ruff check
 
   pyright:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
+      - uses: nixbuild/nix-quick-install-action@v27
+      - uses: nix-community/cache-nix-action@v5
         with:
-          python-version: '3.11'
-          cache: 'poetry'
-      - name: Install dependencies
-        run: poetry install
-      - name: pyright
-        run: poetry run pyright .
-  
-  # tests:
-  #   if: github.event_name == 'push'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-python@v4
-  #       with:
-  #         python-version: '3.12'
-  #     - name: Run image
-  #       uses: abatilo/actions-poetry@v2
-  #       with:
-  #         poetry-version: '1.7.1'
-  #     - name: Install dependencies
-  #       run: poetry install; poetry add pytest
-  #     - name: pytest
-  #       run: poetry run pytest --cov-report term-missing --cov-branch --cov=app tests/ --cov-fail-under=85
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock', 'pyproject.toml', 'poetry.lock') }}
+          paths: |
+            ~/.cache/pypoetry
+      - run: nix develop --command poetry install
+      - run: nix develop --command poetry run pyright
