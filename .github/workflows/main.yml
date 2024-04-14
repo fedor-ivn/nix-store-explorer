@@ -1,0 +1,27 @@
+name: nix-store-web
+
+on: [pull_request]
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nixbuild/nix-quick-install-action@v27
+      - uses: nix-community/cache-nix-action@v5
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
+      - run: nix develop --command ruff check
+
+  pyright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nixbuild/nix-quick-install-action@v27
+      - uses: nix-community/cache-nix-action@v5
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock', 'pyproject.toml', 'poetry.lock') }}
+          paths: |
+            ~/.cache/pypoetry
+      - run: nix develop --command poetry install
+      - run: nix develop --command poetry run pyright
