@@ -12,7 +12,9 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./auth_database.db
 Base: DeclarativeMeta = declarative_base()
 
 
-class User(SQLAlchemyBaseUserTable[int], Base):
+class User(Base):
+    __tablename__ = "user"
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(
         String(length=320), unique=True, index=True, nullable=False
@@ -24,7 +26,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
 
 
 engine = create_async_engine(DATABASE_URL)
-async_session_makler = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+async_session_makler = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)  # type: ignore
 
 
 async def create_db_and_tables():
@@ -33,7 +35,7 @@ async def create_db_and_tables():
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_makler() as session:
+    async with async_session_makler() as session:    # type: ignore
         yield session
 
 
