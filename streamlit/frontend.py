@@ -1,3 +1,5 @@
+# pyright: reportAttributeAccessIssue = false
+
 import streamlit as st
 import requests
 
