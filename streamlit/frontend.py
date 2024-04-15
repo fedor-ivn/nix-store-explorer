@@ -10,7 +10,7 @@ st.header("Create store")
 store_name_input_key = "create_store_name_input"
 store_name = st.text_input("Store name", key=store_name_input_key)
 if st.button("Create store"):
-    response = requests.post(f"{base_url}/store", json={"name": store_name})
+    response = requests.post(f"{base_url}/store/{store_name}")
     if response.status_code == 200:
         st.success("Store created successfully!")
     else:
@@ -56,9 +56,8 @@ if st.button("Add package"):
     if store_name and package_name:
         store_id = get_store_id(store_name)
         if store_id:
-            payload = {"name": package_name, "store_id": store_id}
             response = requests.post(
-                f"{base_url}/store/{store_name}/package", json=payload)
+                f"{base_url}/store/{store_name}/package/{package_name}")
             if response.status_code == 200:
                 st.success("Package added successfully!")
             else:
