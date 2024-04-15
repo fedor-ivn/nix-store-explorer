@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi_users import fastapi_users, FastAPIUsers
+from fastapi_users import FastAPIUsers
 import asyncio
 import uvicorn
 
