@@ -1,11 +1,6 @@
 from pydantic import BaseModel
 
 
-class PackageRequest(BaseModel):
-    name: str
-    store_id: int
-
-
 class PackageMeta(BaseModel):
     present: bool
     closure_size: int

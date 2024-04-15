@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter
 
 from store.models.path import PathsDifference
-from store.models.store import StoreRequest, Store
+from store.models.store import Store
 from store.models.package import (
-    PackageRequest,
     PackageMeta,
     Package,
     PackageChange,
@@ -15,9 +14,9 @@ from store.models.package import (
 router = APIRouter(prefix="/store")
 
 
-@router.post("", response_model=Store)
-def create_store(store_request: StoreRequest = Body(...)):
-    store = Store(id=1, name=store_request.name, owner_id=1)
+@router.post("/{name}", response_model=Store)
+def create_store(name: str):
+    store = Store(id=1, name=name, owner_id=1)
     return store
 
 
@@ -33,9 +32,9 @@ def delete_store(name: str):
     return store
 
 
-@router.post("/{store_name}/package", response_model=Package)
-def add_package(store_name: str, package_request: PackageRequest = Body(...)):
-    package = Package(id=1, name=package_request.name, store_id=1, closure=Closure())
+@router.post("/{store_name}/package/{package_name}", response_model=Package)
+def add_package(store_name: str, package_name: str):
+    package = Package(id=1, name=package_name, store_id=1, closure=Closure())
     return package
 
 
