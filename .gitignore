@@ -3,3 +3,5 @@
 .direnv
 
 .idea/
+
+api/auth_database.db
