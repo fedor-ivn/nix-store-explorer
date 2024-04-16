@@ -4,4 +4,6 @@
 
 .idea/
 
-api/auth_database.db
+api/stores/
+
+api/database.db
