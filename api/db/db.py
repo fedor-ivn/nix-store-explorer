@@ -1,13 +1,13 @@
 import os
 from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, DeclarativeMeta
+from sqlalchemy.orm import DeclarativeMeta
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./database.db")
 engine = create_async_engine(DATABASE_URL)
-async_session_maker = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)  # type: ignore
+async_session_maker = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)  # type: ignore
 Base: DeclarativeMeta = declarative_base()
 
 
