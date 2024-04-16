@@ -39,31 +39,18 @@ if st.button("Delete store"):
     else:
         st.error("Failed to delete store")
 
-
-def get_store_id(store_name):
-    response = requests.get(f"{base_url}/store/{store_name}")
-    if response.status_code == 200:
-        store_data = response.json()
-        return store_data['id']
-    return None
-
-
 st.header("Add package")
 store_name = st.text_input(
     "Enter store name", key="add_package_store_name_input")
 package_name = st.text_input("Package name", key="package_name_input")
 if st.button("Add package"):
     if store_name and package_name:
-        store_id = get_store_id(store_name)
-        if store_id:
-            response = requests.post(
+        response = requests.post(
                 f"{base_url}/store/{store_name}/package/{package_name}")
-            if response.status_code == 200:
-                st.success("Package added successfully!")
-            else:
-                st.error("Failed to add package")
+        if response.status_code == 200:
+            st.success("Package added successfully!")
         else:
-            st.error("Store not found")
+            st.error("Failed to add package")
     else:
         st.warning("Please enter both store name and package name")
 
