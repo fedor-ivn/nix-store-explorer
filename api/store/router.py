@@ -1,8 +1,14 @@
-from fastapi import APIRouter
+from typing import Annotated
 
-from store.models.path import PathsDifference
-from store.models.store import Store
-from store.models.package import (
+from fastapi import APIRouter, Depends
+
+from auth.auth import fastapi_users
+from auth.schemas import User
+from dependencies.store import store_service_dependency
+from services.stores import StoreService
+from store.schemas.path import PathsDifference
+from store.schemas.store import Store
+from store.schemas.package import (
     PackageMeta,
     Package,
     PackageChange,
@@ -12,11 +18,16 @@ from store.models.package import (
 )
 
 router = APIRouter(prefix="/store")
+current_user = fastapi_users.current_user()
 
 
 @router.post("/{name}", response_model=Store)
-def create_store(name: str):
-    store = Store(id=1, name=name, owner_id=1)
+async def create_store(
+        name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        user: User = Depends(current_user),
+):
+    store = await store_service.add_store(name, user)
     return store
 
 

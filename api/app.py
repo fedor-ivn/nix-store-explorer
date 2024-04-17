@@ -1,22 +1,15 @@
 from fastapi import FastAPI
-from fastapi_users import FastAPIUsers
 import asyncio
 import uvicorn
 
 from store.router import router as store_router
-from auth.database import User, create_db_and_tables
-from auth.auth import auth_backend
+from db.db import create_db_and_tables
+from auth.auth import auth_backend, fastapi_users
 from auth.schemas import UserCreate, UserRead
-from auth.manager import get_user_manager
 
 app = FastAPI()
 
 app.include_router(store_router)
-
-fastapi_users = FastAPIUsers[User, int](
-    get_user_manager,
-    [auth_backend],
-)
 
 app.include_router(
     fastapi_users.get_auth_router(auth_backend),
