@@ -7,11 +7,15 @@ from db.db import async_session_maker
 
 class AbstractRepository(ABC):
     @abstractmethod
-    async def add_one(self, data: dict):
+    async def add_one(self, data: dict) -> int:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all(self, filter_by: dict):
+    async def get_all(self, filter_by: dict) -> list:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_one(self, filter_by: dict) -> list:
         raise NotImplementedError
 
 
