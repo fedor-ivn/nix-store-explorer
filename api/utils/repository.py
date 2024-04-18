@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+from typing import Sequence
 
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, Row
 
 from db.db import async_session_maker
 
@@ -11,11 +12,11 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all(self, filter_by: dict) -> list:
+    async def get_all(self, filter_by: dict) -> Sequence[Row]:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_one(self, filter_by: dict) -> list:
+    async def get_one(self, filter_by: dict) -> Row | None:
         raise NotImplementedError
 
 
@@ -31,15 +32,15 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.commit()
             return result.scalar_one()
 
-    async def get_all(self, filter_by: dict) -> list:
+    async def get_all(self, filter_by: dict) -> Sequence[Row]:
         async with async_session_maker() as session:
-            stmt = select(self.model).filter_by(**filter_by)
+            stmt = select(self.model).filter_by(**filter_by)  # type: ignore
             result = await session.execute(stmt)
             return result.fetchall()
 
-    async def get_one(self, filter_by: dict) -> list:
+    async def get_one(self, filter_by: dict) -> Row | None:
         async with async_session_maker() as session:
-            stmt = select(self.model).filter_by(**filter_by)
+            stmt = select(self.model).filter_by(**filter_by)  # type: ignore
             result = await session.execute(stmt)
             result = result.fetchone()
             return result
