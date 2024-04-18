@@ -2,6 +2,7 @@ from sqlalchemy import Integer, String
 from sqlalchemy.orm import mapped_column, Mapped
 
 from db.db import Base
+from store.schemas.store import Store as StoreSchema
 
 
 class Store(Base):
@@ -10,3 +11,6 @@ class Store(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(length=320), nullable=False)
     owner_id: Mapped[int] = mapped_column(Integer)
+
+    def to_read_model(self):
+        return StoreSchema(id=self.id, name=self.name, owner_id=self.owner_id)

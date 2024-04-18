@@ -28,3 +28,10 @@ class StoreService:
         store_id = await self.store_repository.add_one(data=store_dict)
 
         return Store(id=store_id, name=name, owner_id=user.id)
+
+    async def get_stores(self, user: User):
+        filter_by = {
+            "owner_id": user.id
+        }
+        stores = await self.store_repository.get_all(filter_by)
+        return stores
