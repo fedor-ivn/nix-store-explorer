@@ -32,4 +32,6 @@ class SQLAlchemyRepository(AbstractRepository):
             stmt = select(self.model).filter_by(**filter_by)
             result = await session.execute(stmt)
             result = [res[0].to_read_model() for res in result.all()]
+            return result.fetchall()
+
             return result

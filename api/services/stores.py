@@ -34,4 +34,5 @@ class StoreService:
             "owner_id": user.id
         }
         stores = await self.store_repository.get_all(filter_by)
-        return stores
+        result = [store[0].to_read_model() for store in stores]
+        return result
