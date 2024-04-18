@@ -51,8 +51,12 @@ async def get_store(
 
 
 @router.delete("/{name}", response_model=Store)
-def delete_store(name: str):
-    store = Store(id=1, name=name, owner_id=1)
+async def delete_store(
+        name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        user: User = Depends(current_user),
+):
+    store = await store_service.delete_store(name, user)
     return store
 
 

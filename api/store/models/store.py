@@ -9,7 +9,7 @@ class Store(Base):
     __tablename__ = "store"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(length=320), nullable=False)
+    name: Mapped[str] = mapped_column(String(length=320), nullable=False, unique=True)
     owner_id: Mapped[int] = mapped_column(Integer)
 
     def to_read_model(self):
