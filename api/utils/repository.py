@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from sqlalchemy import insert, select, Row
+from sqlalchemy import insert, select, Row, delete as sqlalchemy_delete
 
 from db.db import async_session_maker
 
@@ -17,6 +17,10 @@ class AbstractRepository(ABC):
 
     @abstractmethod
     async def get_one(self, filter_by: dict) -> Row | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def delete(self, filter_by: dict):
         raise NotImplementedError
 
 
@@ -44,3 +48,9 @@ class SQLAlchemyRepository(AbstractRepository):
             result = await session.execute(stmt)
             result = result.fetchone()
             return result
+
+    async def delete(self, filter_by: dict):
+        async with async_session_maker() as session:
+            stmt = sqlalchemy_delete(self.model).filter_by(**filter_by)  # type: ignore
+            await session.execute(stmt)
+            await session.commit()

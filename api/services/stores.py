@@ -50,3 +50,16 @@ class StoreService:
 
         result = store[0].to_read_model()
         return result
+
+    async def delete_store(self, name: str, user: User):
+        filter_by = {
+            "owner_id": user.id,
+            "name": name,
+        }
+        store = await self.get_store(name, user)
+        await self.store_repository.delete(filter_by)
+
+        store_path = self.stores_path / f"{user.id}/{name}"
+        logic.remove_store(store_path)
+
+        return store
