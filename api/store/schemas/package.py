@@ -10,7 +10,7 @@ class Package(BaseModel):
     id: int
     name: str
     store_id: int
-    closure: list[str]
+    closure: "Closure"
 
 
 class VersionUpdate(BaseModel):
@@ -25,7 +25,7 @@ class PackageChange(BaseModel):
 
 
 class Closure(BaseModel):
-    packages: list["Package"] = []
+    packages: list[str] = []
 
 
 class ClosuresDifference(BaseModel):

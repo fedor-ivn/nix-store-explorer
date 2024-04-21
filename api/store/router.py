@@ -79,7 +79,7 @@ async def add_package(
 
 @router.delete("/{store_name}/package/{package_name}", response_model=Package)
 def delete_package(store_name: str, package_name: str):
-    package = Package(id=1, name=package_name, store_id=1, closure=Closure())
+    package = Package(id=1, name=package_name, store_id=1, closure=Closure(packages=[]))
     return package
 
 

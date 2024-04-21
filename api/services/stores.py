@@ -14,13 +14,13 @@ from logic.exceptions import (
 )
 from store.models.store import Store
 from store.models.package import Package
-from store.schemas.package import Package as PackageSchema
+from store.schemas.package import Package as PackageSchema, Closure
 from utils.repository import AbstractRepository
 
 
 class PackageService:
     def __init__(self, repository: AbstractRepository):
-        self.repository = repository()
+        self.repository = repository()  # type: ignore
 
     async def add_package(self, store_path: Path, package_name: str, store_id: int) -> int:
         try:
@@ -53,9 +53,8 @@ class PackageService:
         except Exception:
             raise HTTPException(
                 status_code=500,
-                detail=f"Unexpected error"
+                detail="Unexpected error"
             )
-
 
         package = {
             "name": package_name,
@@ -69,14 +68,14 @@ class PackageService:
             "name": package_name,
             "store_id": store_id
         }
-        package: Row[Package] = await self.repository.get_one(filter_by)
-        if package is None:
+        package_row: Row[Package] = await self.repository.get_one(filter_by)
+        if package_row is None:
             return None
 
-        package: Package = package[0]
-        package: PackageSchema = package.to_read_model()
+        package: Package = package_row[0]
+        package_schema: PackageSchema = package.to_read_model()
 
-        return package
+        return package_schema
 
 
 class StoreService:
@@ -141,7 +140,7 @@ class StoreService:
             package_name: str,
             user: User,
             package_service: PackageService
-    ) -> Package:
+    ) -> PackageSchema:
         store_path = self.stores_path / f"{user.id}/{store_name}"
 
         store = await self.get_store(store_name, user)
@@ -156,5 +155,5 @@ class StoreService:
         package_id: int = await package_service.add_package(store_path, package_name, store.id)
         raw_closure: list[str] = core_logic.get_closure(store_path, package_name)
 
-        package = PackageSchema(id=package_id, name=package_name, store_id=store.id, closure=raw_closure)
+        package = PackageSchema(id=package_id, name=package_name, store_id=store.id, closure=Closure(packages=raw_closure))
         return package
