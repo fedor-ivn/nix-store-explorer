@@ -10,7 +10,7 @@ class Package(BaseModel):
     id: int
     name: str
     store_id: int
-    closure: "Closure"
+    closure: list[str]
 
 
 class VersionUpdate(BaseModel):
