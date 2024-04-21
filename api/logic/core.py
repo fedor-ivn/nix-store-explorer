@@ -4,8 +4,13 @@ from shutil import rmtree
 from subprocess import run
 import json
 
-from logic.exceptions import InsecurePackageException, BrokenPackageException, NotAvailableOnHostPlatformException, \
-    AttributeNotProvidedException, UnfreeLicenceException
+from logic.exceptions import (
+    InsecurePackageException,
+    BrokenPackageException,
+    NotAvailableOnHostPlatformException,
+    AttributeNotProvidedException,
+    UnfreeLicenceException
+)
 
 
 def create_store(store: Path):
