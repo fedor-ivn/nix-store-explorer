@@ -84,7 +84,7 @@ class StoreService:
         self.store_repository = store_repository()  # type: ignore
 
     async def add_store(self, name: str, user: User):
-        store_path = self.stores_path / f"{user.id}/{name}"
+        store_path = self.stores_path / str(user.id) / name
 
         try:
             core_logic.create_store(store_path)
@@ -129,7 +129,7 @@ class StoreService:
         store = await self.get_store(name, user)
         await self.store_repository.delete(filter_by)
 
-        store_path = self.stores_path / f"{user.id}/{name}"
+        store_path = self.stores_path / str(user.id) / name
         core_logic.remove_store(store_path)
 
         return store
@@ -141,7 +141,7 @@ class StoreService:
             user: User,
             package_service: PackageService
     ) -> PackageSchema:
-        store_path = self.stores_path / f"{user.id}/{store_name}"
+        store_path = self.stores_path / str(user.id) / store_name
 
         store = await self.get_store(store_name, user)
         package: PackageSchema | None = await package_service.get_package(package_name, store.id)
