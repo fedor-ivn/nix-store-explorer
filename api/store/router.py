@@ -94,10 +94,17 @@ async def delete_package(
 
 
 @router.get("/{store_name}/difference/{other_store_name}", response_model=PathsDifference)
-def get_paths_difference(store_name: str, other_store_name: str):
+async def get_paths_difference(
+        store_name: str,
+        other_store_name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        user: User = Depends(current_user),
+):
+    difference_1, difference_2 = await store_service.get_paths_difference(store_name, other_store_name, user)
+
     paths_difference = PathsDifference(
-        absent_in_store_1=["/nix/store/1", "/nix/store/2"],
-        absent_in_store_2=["/nix/store/3", "/nix/store/4"],
+        absent_in_store_1=difference_1,
+        absent_in_store_2=difference_2,
     )
     return paths_difference
 
