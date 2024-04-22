@@ -1,3 +1,9 @@
+[tool.pyright]
+exclude = [
+    "stores",
+    "**/__pycache__"
+]
+
 [tool.poetry]
 name = "nix-store-web"
 version = "0.1.0"

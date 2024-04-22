@@ -25,7 +25,7 @@ class PackageChange(BaseModel):
 
 
 class Closure(BaseModel):
-    packages: list["Package"] = []
+    packages: list[str] = []
 
 
 class ClosuresDifference(BaseModel):
