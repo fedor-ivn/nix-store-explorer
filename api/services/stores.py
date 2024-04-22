@@ -10,7 +10,8 @@ from logic.exceptions import (
     BrokenPackageException,
     NotAvailableOnHostPlatformException,
     AttributeNotProvidedException,
-    UnfreeLicenceException
+    UnfreeLicenceException,
+    StillAliveException
 )
 from store.models.store import Store
 from store.models.package import Package
@@ -76,6 +77,22 @@ class PackageService:
         package_schema: PackageSchema = package.to_read_model()
 
         return package_schema
+
+    async def delete_package(self, package_name: str, store_id: int) -> PackageSchema | None:
+        filter_by = {
+            "name": package_name,
+            "store_id": store_id
+        }
+        package_row: Row[Package] = await self.repository.get_one(filter_by)
+
+        if package_row is None:
+            return None
+
+        package: PackageSchema = package_row[0].to_read_model()
+
+        await self.repository.delete(filter_by)
+
+        return package
 
 
 class StoreService:
@@ -156,4 +173,27 @@ class StoreService:
         raw_closure: list[str] = core_logic.get_closure(store_path, package_name)
 
         package = PackageSchema(id=package_id, name=package_name, store_id=store.id, closure=Closure(packages=raw_closure))
+        return package
+
+    async def delete_package(
+            self,
+            store_name: str,
+            package_name: str,
+            user: User,
+            package_service: PackageService
+    ) -> PackageSchema:
+        store_path: Path = self.stores_path / str(user.id) / store_name
+
+        store = await self.get_store(store_name, user)
+
+        package: PackageSchema | None = await package_service.delete_package(package_name, store.id)
+
+        if package is None:
+            raise HTTPException(status_code=400, detail=f"Package {package_name} was not found!")
+
+        try:
+            core_logic.remove_package(store_path, package_name)
+        except StillAliveException:
+            raise HTTPException(status_code=400, detail="Cannot delete this package since it is used by another one!")
+
         return package

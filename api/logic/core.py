@@ -9,7 +9,8 @@ from logic.exceptions import (
     BrokenPackageException,
     NotAvailableOnHostPlatformException,
     AttributeNotProvidedException,
-    UnfreeLicenceException
+    UnfreeLicenceException,
+    StillAliveException
 )
 
 
@@ -78,9 +79,13 @@ def remove_package(store: Path, package_name: str):
         capture_output=True,
         text=True,
     )
-    if process.stderr:
+
+    try:
+        process.check_returncode()
+    except subprocess.CalledProcessError:
+        if "since it is still alive." in process.stderr:
+            raise StillAliveException()
         raise Exception(process.stderr)
-    process.check_returncode()
 
 
 def _check_paths_are_valid(output, package_name: str):
