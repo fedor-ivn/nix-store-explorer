@@ -4,6 +4,6 @@
 
 .idea/
 
-api/stores/
+stores/
 
 api/database.db
