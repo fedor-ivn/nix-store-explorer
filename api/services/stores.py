@@ -80,7 +80,7 @@ class PackageService:
 
 class StoreService:
     def __init__(self, store_repository: AbstractRepository):
-        self.stores_path = Path("stores/")
+        self.stores_path = Path("../stores")
         self.store_repository = store_repository()  # type: ignore
 
     async def add_store(self, name: str, user: User):
