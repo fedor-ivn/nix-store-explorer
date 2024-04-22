@@ -13,7 +13,6 @@ from store.schemas.package import (
     Package,
     PackageChange,
     VersionUpdate,
-    Closure,
     ClosuresDifference
 )
 
