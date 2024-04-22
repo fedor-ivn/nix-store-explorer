@@ -1,9 +1,14 @@
-from fastapi import APIRouter, Body
+from typing import Annotated
 
-from store.models.path import PathsDifference
-from store.models.store import StoreRequest, Store
-from store.models.package import (
-    PackageRequest,
+from fastapi import APIRouter, Depends
+
+from auth.auth import fastapi_users
+from auth.schemas import User
+from dependencies.store import store_service_dependency, package_service_dependency
+from services.stores import StoreService, PackageService
+from store.schemas.path import PathsDifference
+from store.schemas.store import Store
+from store.schemas.package import (
     PackageMeta,
     Package,
     PackageChange,
@@ -13,35 +18,68 @@ from store.models.package import (
 )
 
 router = APIRouter(prefix="/store")
+current_user = fastapi_users.current_user()
 
 
-@router.post("", response_model=Store)
-def create_store(store_request: StoreRequest = Body(...)):
-    store = Store(id=1, name=store_request.name, owner_id=1)
+@router.post("/{name}", response_model=Store)
+async def create_store(
+        name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        user: User = Depends(current_user),
+):
+    store = await store_service.add_store(name, user)
     return store
+
+
+@router.get("", response_model=list[Store])
+async def get_all_stores(
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        user: User = Depends(current_user),
+):
+    stores = await store_service.get_stores(user)
+    return stores
 
 
 @router.get("/{name}", response_model=Store)
-def get_store(name: str):
-    store = Store(id=1, name=name, owner_id=1)
-    return store
+async def get_store(
+        name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        user: User = Depends(current_user),
+):
+    stores = await store_service.get_store(name, user)
+    return stores
 
 
 @router.delete("/{name}", response_model=Store)
-def delete_store(name: str):
-    store = Store(id=1, name=name, owner_id=1)
+async def delete_store(
+        name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        user: User = Depends(current_user),
+):
+    store = await store_service.delete_store(name, user)
     return store
 
 
-@router.post("/{store_name}/package", response_model=Package)
-def add_package(store_name: str, package_request: PackageRequest = Body(...)):
-    package = Package(id=1, name=package_request.name, store_id=1, closure=Closure())
+@router.post("/{store_name}/package/{package_name}", response_model=Package)
+async def add_package(
+        store_name: str,
+        package_name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        package_service: Annotated[PackageService, Depends(package_service_dependency)],
+        user: User = Depends(current_user),
+):
+    package: Package = await store_service.add_package(
+        store_name,
+        package_name,
+        user,
+        package_service
+    )
     return package
 
 
 @router.delete("/{store_name}/package/{package_name}", response_model=Package)
 def delete_package(store_name: str, package_name: str):
-    package = Package(id=1, name=package_name, store_id=1, closure=Closure())
+    package = Package(id=1, name=package_name, store_id=1, closure=Closure(packages=[]))
     return package
 
 

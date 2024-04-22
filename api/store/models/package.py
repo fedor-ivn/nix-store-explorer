@@ -1,41 +1,16 @@
-from pydantic import BaseModel
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column
+
+from db.db import Base
+from store.schemas.package import Package as PackageSchema, Closure
 
 
-class PackageRequest(BaseModel):
-    name: str
-    store_id: int
+class Package(Base):
+    __tablename__ = "package"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(length=320), nullable=False, unique=True)
+    store_id: Mapped[int]
 
-class PackageMeta(BaseModel):
-    present: bool
-    closure_size: int
-
-
-class Package(BaseModel):
-    id: int
-    name: str
-    store_id: int
-    closure: "Closure"
-
-
-class VersionUpdate(BaseModel):
-    old: str
-    new: str
-
-
-class PackageChange(BaseModel):
-    package_name: str
-    version_update: VersionUpdate
-    size_update: str
-
-
-class Closure(BaseModel):
-    packages: list["Package"] = []
-
-
-class ClosuresDifference(BaseModel):
-    difference: list[PackageChange]
-
-
-class ClosureSize(BaseModel):
-    size: int
+    def to_read_model(self):
+        return PackageSchema(id=self.id, name=self.name, store_id=self.store_id, closure=Closure(packages=[]))

@@ -1,7 +1,16 @@
+import subprocess
 from pathlib import Path
 from shutil import rmtree
 from subprocess import run
 import json
+
+from logic.exceptions import (
+    InsecurePackageException,
+    BrokenPackageException,
+    NotAvailableOnHostPlatformException,
+    AttributeNotProvidedException,
+    UnfreeLicenceException
+)
 
 
 def create_store(store: Path):
@@ -42,7 +51,21 @@ def install_package(store: Path, package_name: str):
         capture_output=True,
         text=True,
     )
-    process.check_returncode()
+    try:
+        process.check_returncode()
+    except subprocess.CalledProcessError as exception:
+        if "is marked as insecure, refusing to evaluate." in process.stderr:
+            raise InsecurePackageException()
+        elif "is marked as broken, refusing to evaluate." in process.stderr:
+            raise BrokenPackageException()
+        elif "is not available on the requested hostPlatform" in process.stderr:
+            raise NotAvailableOnHostPlatformException()
+        elif "does not provide attribute" in process.stderr:
+            raise AttributeNotProvidedException()
+        elif "has an unfree license (‘unfree’), refusing to evaluate." in process.stderr:
+            raise UnfreeLicenceException()
+        else:
+            raise exception
 
     output = json.loads(process.stdout)
     path = output[0]["outputs"]["out"]
@@ -88,7 +111,7 @@ def get_closure_size(store: Path, package_name: str):
     return closure_size
 
 
-def get_closure(store: Path, package_name: str):
+def get_closure(store: Path, package_name: str) -> list[str]:
     process = run(
         [
             "nix",
@@ -107,4 +130,4 @@ def get_closure(store: Path, package_name: str):
     output = json.loads(process.stdout)
     _check_paths_are_valid(output, package_name)
 
-    return set(path["path"] for path in output)
+    return list(set(path["path"] for path in output))

@@ -1,3 +1,9 @@
+[tool.pyright]
+exclude = [
+    "stores",
+    "**/__pycache__"
+]
+
 [tool.poetry]
 name = "nix-store-web"
 version = "0.1.0"
@@ -14,6 +20,7 @@ fastapi-users = {extras = ["sqlalchemy"], version = "^13.0.0"}
 asyncpg = "^0.29.0"
 aiosqlite = "^0.20.0"
 extra-streamlit-components = "^0.1.71"
+alembic = "^1.13.1"
 
 
 [build-system]
