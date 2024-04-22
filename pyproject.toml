@@ -1,6 +1,6 @@
 [tool.pyright]
 exclude = [
-    "api/stores",
+    "stores",
     "**/__pycache__"
 ]
 
