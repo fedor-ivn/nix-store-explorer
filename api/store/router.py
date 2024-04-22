@@ -13,7 +13,6 @@ from store.schemas.package import (
     Package,
     PackageChange,
     VersionUpdate,
-    Closure,
     ClosuresDifference
 )
 
@@ -78,8 +77,19 @@ async def add_package(
 
 
 @router.delete("/{store_name}/package/{package_name}", response_model=Package)
-def delete_package(store_name: str, package_name: str):
-    package = Package(id=1, name=package_name, store_id=1, closure=Closure(packages=[]))
+async def delete_package(
+        store_name: str,
+        package_name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        package_service: Annotated[PackageService, Depends(package_service_dependency)],
+        user: User = Depends(current_user),
+):
+    package: Package = await store_service.delete_package(
+        store_name,
+        package_name,
+        user,
+        package_service
+    )
     return package
 
 

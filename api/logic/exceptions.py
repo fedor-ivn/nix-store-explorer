@@ -16,3 +16,7 @@ class AttributeNotProvidedException(Exception):
 
 class UnfreeLicenceException(Exception):
     pass
+
+
+class StillAliveException(Exception):
+    pass
