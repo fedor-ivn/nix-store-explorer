@@ -7,3 +7,9 @@
 api/stores/
 
 api/database.db
+
+**/.pytest_cache
+
+**/.coverage
+
+.vscode
