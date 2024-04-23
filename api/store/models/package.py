@@ -1,8 +1,10 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
+
 from db.db import Base
-from store.schemas.package import Package as PackageSchema, Closure
+from store.schemas.package import Closure
+from store.schemas.package import Package as PackageSchema
 
 
 class Package(Base):
@@ -13,4 +15,9 @@ class Package(Base):
     store_id: Mapped[int]
 
     def to_read_model(self):
-        return PackageSchema(id=self.id, name=self.name, store_id=self.store_id, closure=Closure(packages=[]))
+        return PackageSchema(
+            id=self.id,
+            name=self.name,
+            store_id=self.store_id,
+            closure=Closure(packages=[]),
+        )

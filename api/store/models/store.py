@@ -1,9 +1,8 @@
 from sqlalchemy import Integer, String
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import Mapped, mapped_column
 
 from db.db import Base
 from store.schemas.store import Store as StoreSchema
-
 
 class Store(Base):
     __tablename__ = "store"

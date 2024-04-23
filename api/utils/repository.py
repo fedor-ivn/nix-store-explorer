@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from sqlalchemy import insert, select, Row, delete as sqlalchemy_delete
+from sqlalchemy import Row, insert, select
+from sqlalchemy import delete as sqlalchemy_delete
 
 from db.db import async_session_maker
-
 
 class AbstractRepository(ABC):
     @abstractmethod
@@ -29,8 +29,12 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def add_one(self, data: dict) -> int:
         async with async_session_maker() as session:
-            stmt = insert(self.model).values(**data).returning(  # type: ignore
-                self.model.id  # type: ignore
+            stmt = (
+                insert(self.model)
+                .values(**data)
+                .returning(  # type: ignore
+                    self.model.id  # type: ignore
+                )
             )
             result = await session.execute(stmt)
             await session.commit()
