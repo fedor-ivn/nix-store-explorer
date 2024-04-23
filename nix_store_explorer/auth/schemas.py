@@ -2,7 +2,7 @@ from fastapi_users import schemas
 from sqlalchemy import Integer, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
-from db.db import Base
+from ..db.db import Base
 
 
 class UserRead(schemas.BaseUser[int]):

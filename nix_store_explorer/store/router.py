@@ -2,13 +2,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from auth.auth import fastapi_users
-from auth.schemas import User
-from dependencies.store import store_service_dependency, package_service_dependency
-from services.stores import StoreService, PackageService
-from store.schemas.path import PathsDifference
-from store.schemas.store import Store
-from store.schemas.package import (
+from ..auth.auth import fastapi_users
+from ..auth.schemas import User
+from ..dependencies.store import store_service_dependency, package_service_dependency
+from ..services.stores import StoreService, PackageService
+from ..store.schemas.path import PathsDifference
+from ..store.schemas.store import Store
+from ..store.schemas.package import (
     PackageMeta,
     Package,
     PackageChange,
