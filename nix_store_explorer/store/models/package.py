@@ -9,7 +9,7 @@ class Package(Base):
     __tablename__ = "package"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(length=320), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(length=320), nullable=False)
     store_id: Mapped[int]
 
     def to_read_model(self):
