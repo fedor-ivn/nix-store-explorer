@@ -11,11 +11,11 @@ from logic.exceptions import (
     NotAvailableOnHostPlatformException,
     AttributeNotProvidedException,
     UnfreeLicenceException,
-    StillAliveException
+    StillAliveException, PackageNotInstalledException
 )
 from store.models.store import Store
 from store.models.package import Package
-from store.schemas.package import Package as PackageSchema, Closure, ClosuresDifference
+from store.schemas.package import Package as PackageSchema, Closure, ClosuresDifference, PackageMeta
 from utils.repository import AbstractRepository
 
 
@@ -236,3 +236,18 @@ class StoreService:
             absent_in_package_1=difference_2,
             absent_in_package_2=difference_1,
         )
+
+    async def get_package_meta(
+            self,
+            store_name: str,
+            package_name: str,
+            user: User,
+    ):
+        store_path: Path = self.stores_path / str(user.id) / store_name
+
+        try:
+            closure_size = core_logic.get_closure_size(store_path, package_name)
+        except PackageNotInstalledException:
+            return PackageMeta(present=False, closure_size=0)
+
+        return PackageMeta(present=True, closure_size=closure_size)

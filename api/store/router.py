@@ -128,5 +128,11 @@ async def get_closures_difference(
 
 
 @router.get("/{store_name}/package/{package_name}", response_model=PackageMeta)
-def get_package_meta(store_name: str, package_name: str):
-    return PackageMeta(present=True, closure_size=3)
+async def get_package_meta(
+        store_name: str,
+        package_name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        user: User = Depends(current_user),
+):
+    package_meta: PackageMeta = await store_service.get_package_meta(store_name, package_name, user)
+    return package_meta
