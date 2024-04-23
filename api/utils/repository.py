@@ -6,6 +6,7 @@ from sqlalchemy import delete as sqlalchemy_delete
 
 from db.db import async_session_maker
 
+
 class AbstractRepository(ABC):
     @abstractmethod
     async def add_one(self, data: dict) -> int:

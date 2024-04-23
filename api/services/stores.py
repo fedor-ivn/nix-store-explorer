@@ -3,12 +3,6 @@ from pathlib import Path
 from fastapi import HTTPException
 from sqlalchemy import Row
 
-
-from store.models.package import Package
-from store.models.store import Store
-from store.schemas.package import Closure
-from store.schemas.package import Package as PackageSchema
-from utils.repository import AbstractRepository
 from auth.schemas import User
 from logic import core as core_logic
 from logic.exceptions import (
@@ -19,6 +13,12 @@ from logic.exceptions import (
     StillAliveException,
     UnfreeLicenceException,
 )
+from store.models.package import Package
+from store.models.store import Store
+from store.schemas.package import Closure
+from store.schemas.package import Package as PackageSchema
+from utils.repository import AbstractRepository
+
 
 class PackageService:
     def __init__(self, repository: AbstractRepository):
