@@ -30,8 +30,8 @@ class SQLAlchemyRepository(AbstractRepository):
     async def add_one(self, data: dict) -> int:
         async with async_session_maker() as session:
             stmt = (
-                insert(self.model)
-                .values(**data)
+                insert(self.model)  # type: ignore
+                .values(**data)  # type: ignore
                 .returning(  # type: ignore
                     self.model.id  # type: ignore
                 )
