@@ -4,6 +4,7 @@ import pytest
 from unittest.mock import patch
 import store.logic as logic
 
+
 @pytest.fixture
 def store():
     store = Path("stores")
@@ -17,9 +18,11 @@ def test_create_store(store):
     logic.create_store(path)
     assert path.exists()
 
+
 def test_remove_store(store):
     logic.remove_store(store)
     assert not store.exists()
+
 
 def test_get_paths(store):
     Path("stores/nix/store").mkdir(parents=True)
@@ -28,7 +31,7 @@ def test_get_paths(store):
 
     paths = logic.get_paths(store)
     assert paths == {"/nix/store/file1", "/nix/store/file2"}
-    
+
 
 def test_install_package(store):
     package_name = "package_name"
@@ -59,7 +62,14 @@ def test_remove_package(store):
         mock_run.return_value.stderr = False
         logic.remove_package(store, package_name)
         mock_run.assert_called_with(
-            ["nix", "store", "delete", "--store", str(store), f"nixpkgs#{package_name}"],
+            [
+                "nix",
+                "store",
+                "delete",
+                "--store",
+                str(store),
+                f"nixpkgs#{package_name}",
+            ],
             capture_output=True,
             text=True,
         )
@@ -73,7 +83,14 @@ def test_remove_package_error(store):
         with pytest.raises(Exception):
             logic.remove_package(store, package_name)
         mock_run.assert_called_with(
-            ["nix", "store", "delete", "--store", str(store), f"nixpkgs#{package_name}"],
+            [
+                "nix",
+                "store",
+                "delete",
+                "--store",
+                str(store),
+                f"nixpkgs#{package_name}",
+            ],
             capture_output=True,
             text=True,
         )
@@ -86,7 +103,9 @@ def test_check_paths_are_valid(store):
 
 def test_get_closure_size(store):
     with patch("store.logic.run") as mock_run:
-        mock_run.return_value.stdout = '[{"closureSize": 1, "valid": true}, {"closureSize": 1, "valid": true}]'
+        mock_run.return_value.stdout = (
+            '[{"closureSize": 1, "valid": true}, {"closureSize": 1, "valid": true}]'
+        )
         output = logic.get_closure_size(store, "package_name")
         mock_run.assert_called_with(
             [
@@ -104,9 +123,12 @@ def test_get_closure_size(store):
 
         assert output == 2
 
+
 def test_get_closure(store):
     with patch("store.logic.run") as mock_run:
-        mock_run.return_value.stdout = '[{"path": "path1", "valid": true}, {"path": "path2", "valid": true}]'
+        mock_run.return_value.stdout = (
+            '[{"path": "path1", "valid": true}, {"path": "path2", "valid": true}]'
+        )
         output = logic.get_closure(store, "package_name")
         mock_run.assert_called_with(
             [

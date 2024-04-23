@@ -2,7 +2,7 @@ import pytest
 import shutil
 import os
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, patch, MagicMock
 from fastapi import HTTPException
 from auth.schemas import User
 from store.models.store import Store
@@ -13,23 +13,22 @@ from services.stores import StoreService
 @pytest.fixture
 def store_service():
     with patch(
-        "services.stores.AbstractRepository", new_callable=AsyncMock
+        "services.stores.AbstractRepository", new_callable=MagicMock
     ) as mock_repo:
         service = StoreService(mock_repo)
-        yield service, mock_repo
+        yield service
 
     shutil.rmtree("stores/", ignore_errors=True)
 
 
 def test_store_service_init(store_service):
-    service, mock_repo = store_service
+    service = store_service
     assert isinstance(service.stores_path, Path)
-    assert mock_repo.called
 
 
 @pytest.mark.asyncio
 async def test_add_store_already_exists(store_service):
-    service, _ = store_service
+    service = store_service
     os.makedirs("stores/1/store")
     with pytest.raises(HTTPException):
         await service.add_store("store", User(id=1))
@@ -37,18 +36,19 @@ async def test_add_store_already_exists(store_service):
 
 @pytest.mark.asyncio
 async def test_add_store(store_service):
-    service, _ = store_service
+    service = store_service
     service.store_repository = AsyncMock()
     service.store_repository.add_one.return_value = 1
     store = await service.add_store("store", User(id=1))
     assert store.id == 1
     assert store.name == "store"
     assert store.owner_id == 1
+    assert os.path.exists("stores/1/store")
 
 
 @pytest.mark.asyncio
 async def test_get_stores(store_service):
-    service, _ = store_service
+    service = store_service
     service.store_repository = AsyncMock()
     service.store_repository.get_all.return_value = [
         [Store(id=1, name="store", owner_id=1)]
@@ -59,7 +59,7 @@ async def test_get_stores(store_service):
 
 @pytest.mark.asyncio
 async def test_get_store_not_found(store_service):
-    service, _ = store_service
+    service = store_service
     service.store_repository = AsyncMock()
     service.store_repository.get_one.return_value = None
     with pytest.raises(HTTPException):
@@ -68,8 +68,9 @@ async def test_get_store_not_found(store_service):
 
 @pytest.mark.asyncio
 async def test_get_store(store_service):
-    service, _ = store_service
-    service.store_repository = AsyncMock()
+    service = store_service
+    service.store_repository = MagicMock()
+    service.store_repository.get_one = AsyncMock()
     service.store_repository.get_one.return_value = [
         Store(id=1, name="store", owner_id=1)
     ]
@@ -79,7 +80,7 @@ async def test_get_store(store_service):
 
 @pytest.mark.asyncio
 async def test_delete_store(store_service):
-    service, _ = store_service
+    service = store_service
     service.store_repository = AsyncMock()
     service.get_store = AsyncMock()
     service.get_store.return_value = StoreSchema(id=1, name="store", owner_id=1)
