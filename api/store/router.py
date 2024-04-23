@@ -11,8 +11,6 @@ from store.schemas.store import Store
 from store.schemas.package import (
     PackageMeta,
     Package,
-    PackageChange,
-    VersionUpdate,
     ClosuresDifference
 )
 
