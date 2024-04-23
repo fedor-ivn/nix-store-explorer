@@ -11,6 +11,7 @@ jobs:
       - uses: nix-community/cache-nix-action@v5
         with:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
+      - run: nix develop --command ruff format --check
       - run: nix develop --command ruff check
 
   pyright:
