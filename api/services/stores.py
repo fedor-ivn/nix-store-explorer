@@ -197,3 +197,20 @@ class StoreService:
             raise HTTPException(status_code=400, detail="Cannot delete this package since it is used by another one!")
 
         return package
+
+    async def get_paths_difference(
+            self,
+            store_1_name: str,
+            store_2_name: str,
+            user: User,
+    ) -> tuple[list[str], list[str]]:
+        store_1_path: Path = self.stores_path / str(user.id) / store_1_name
+        store_2_path: Path = self.stores_path / str(user.id) / store_2_name
+
+        store_1_paths: set[str] = core_logic.get_paths(store_1_path)
+        store_2_paths: set[str] = core_logic.get_paths(store_2_path)
+
+        difference_1: list[str] = list(store_1_paths - store_2_paths)
+        difference_2: list[str] = list(store_2_paths - store_1_paths)
+
+        return difference_1, difference_2
