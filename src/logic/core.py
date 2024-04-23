@@ -4,7 +4,7 @@ from shutil import rmtree
 from subprocess import run
 import json
 
-from .exceptions import (
+from src.logic.exceptions import (
     InsecurePackageException,
     BrokenPackageException,
     NotAvailableOnHostPlatformException,

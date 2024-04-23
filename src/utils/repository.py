@@ -3,7 +3,7 @@ from typing import Sequence
 
 from sqlalchemy import insert, select, Row, delete as sqlalchemy_delete
 
-from ..db.db import async_session_maker
+from src.db.db import async_session_maker
 
 
 class AbstractRepository(ABC):

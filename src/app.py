@@ -2,10 +2,10 @@ from fastapi import FastAPI
 import asyncio
 import uvicorn
 
-from .store.router import router as store_router
-from .db.db import create_db_and_tables
-from .auth.auth import auth_backend, fastapi_users
-from .auth.schemas import UserCreate, UserRead
+from src.store.router import router as store_router
+from src.db.db import create_db_and_tables
+from src.auth.auth import auth_backend, fastapi_users
+from src.auth.schemas import UserCreate, UserRead
 
 app = FastAPI()
 

@@ -3,6 +3,9 @@ name = "nix-store-explorer"
 version = "0.1.0"
 description = ""
 authors = ["ilnarkhasanov <4sitescarp@gmail.com>"]
+packages = [
+  { include = "src" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -16,7 +19,7 @@ fastapi-users-db-sqlalchemy = "^6.0.1"
 pyarrow = "<16.0.0"
 
 [tool.poetry.scripts]
-nix-store-explorer = "nix_store_explorer.app:main"
+nix-store-explorer = "src.app:main"
 
 
 [tool.poetry.group.ui.dependencies]
@@ -27,7 +30,6 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pyright]
-exclude = [
-    "stores",
-    "**/__pycache__"
+include = [
+  "src"
 ]

@@ -7,8 +7,8 @@ from fastapi_users.authentication import (
     AuthenticationBackend,
 )
 
-from .manager import get_user_manager
-from .schemas import User
+from src.auth.manager import get_user_manager
+from src.auth.schemas import User
 
 cookie_transport = CookieTransport(cookie_max_age=3600)
 

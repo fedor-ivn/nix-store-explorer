@@ -3,8 +3,8 @@ from typing import Optional
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin
 
-from .database import get_user_db
-from .schemas import User
+from src.auth.database import get_user_db
+from src.auth.schemas import User
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
