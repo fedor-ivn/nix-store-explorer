@@ -20,6 +20,8 @@ select = [
     "I",
 ]
 
+ignore = ["E501"]
+
 [tool.poetry]
 name = "nix-store-web"
 version = "0.1.0"
