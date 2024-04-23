@@ -103,8 +103,8 @@ async def get_paths_difference(
     difference_1, difference_2 = await store_service.get_paths_difference(store_name, other_store_name, user)
 
     paths_difference = PathsDifference(
-        absent_in_store_1=difference_1,
-        absent_in_store_2=difference_2,
+        absent_in_store_1=difference_2,
+        absent_in_store_2=difference_1,
     )
     return paths_difference
 
