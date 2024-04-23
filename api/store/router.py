@@ -112,24 +112,20 @@ async def get_paths_difference(
 @router.get(
     "/{store_name}/package/{package_name}/closure-difference/{other_store_name}/{other_package_name}",
     response_model=ClosuresDifference)
-def get_closures_difference(
-        store_name: str, package_name: str, other_store_name: str, other_package_name: str):
+async def get_closures_difference(
+        store_name: str,
+        package_name: str,
+        other_store_name: str,
+        other_package_name: str,
+        store_service: Annotated[StoreService, Depends(store_service_dependency)],
+        user: User = Depends(current_user),
+):
     """
     Closure difference for packages from the different stores
     """
-
-    closures_difference = ClosuresDifference(difference=[
-        PackageChange(
-            package_name="python",
-            version_update=VersionUpdate(old="3.11", new="3.12"),
-            size_update="+1.4 MiB"
-        ),
-        PackageChange(
-            package_name="node",
-            version_update=VersionUpdate(old="v20.11", new="v20.12.1"),
-            size_update="+14.1 MiB"
-        ),
-    ])
+    closures_difference = await store_service.get_closures_difference(
+        store_name, package_name, other_store_name, other_package_name, user
+    )
     return closures_difference
 
 

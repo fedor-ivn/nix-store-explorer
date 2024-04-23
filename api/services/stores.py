@@ -15,7 +15,7 @@ from logic.exceptions import (
 )
 from store.models.store import Store
 from store.models.package import Package
-from store.schemas.package import Package as PackageSchema, Closure
+from store.schemas.package import Package as PackageSchema, Closure, ClosuresDifference
 from utils.repository import AbstractRepository
 
 
@@ -214,3 +214,25 @@ class StoreService:
         difference_2: list[str] = list(store_2_paths - store_1_paths)
 
         return difference_1, difference_2
+
+    async def get_closures_difference(
+            self,
+            store_name: str,
+            package_name: str,
+            other_store_name: str,
+            other_package_name: str,
+            user: User,
+    ):
+        store_1_path: Path = self.stores_path / str(user.id) / store_name
+        store_2_path: Path = self.stores_path / str(user.id) / other_store_name
+
+        closure_1: set[str] = set(core_logic.get_closure(store_1_path, package_name))
+        closure_2: set[str] = set(core_logic.get_closure(store_2_path, other_package_name))
+
+        difference_1: list[str] = list(closure_1 - closure_2)
+        difference_2: list[str] = list(closure_2 - closure_1)
+
+        return ClosuresDifference(
+            absent_in_package_1=difference_2,
+            absent_in_package_2=difference_1,
+        )
