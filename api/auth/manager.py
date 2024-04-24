@@ -1,6 +1,6 @@
 from typing import Tuple, Optional
-import bcrypt
 
+import bcrypt
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin
 from fastapi_users.password import PasswordHelperProtocol
