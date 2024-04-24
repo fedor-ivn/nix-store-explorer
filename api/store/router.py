@@ -109,14 +109,15 @@ async def get_paths_difference(
 
 @router.get(
     "/{store_name}/package/{package_name}/closure-difference/{other_store_name}/{other_package_name}",
-    response_model=ClosuresDifference)
+    response_model=ClosuresDifference,
+)
 async def get_closures_difference(
-        store_name: str,
-        package_name: str,
-        other_store_name: str,
-        other_package_name: str,
-        store_service: Annotated[StoreService, Depends(store_service_dependency)],
-        user: User = Depends(current_user),
+    store_name: str,
+    package_name: str,
+    other_store_name: str,
+    other_package_name: str,
+    store_service: Annotated[StoreService, Depends(store_service_dependency)],
+    user: User = Depends(current_user),
 ):
     """
     Closure difference for packages from the different stores
