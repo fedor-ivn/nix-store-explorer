@@ -12,10 +12,11 @@ from logic.exceptions import (
     NotAvailableOnHostPlatformException,
     StillAliveException,
     UnfreeLicenceException,
+    PackageNotInstalledException
 )
 from store.models.package import Package
 from store.models.store import Store
-from store.schemas.package import Closure, ClosuresDifference
+from store.schemas.package import Closure, ClosuresDifference, PackageMeta
 from store.schemas.package import Package as PackageSchema
 from utils.repository import AbstractRepository
 
