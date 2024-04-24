@@ -15,7 +15,10 @@ client = TestClient(app)
 def create_db():
     asyncio.run(create_db_and_tables())
     yield
-    os.remove("./test.db")
+    try:
+        os.remove("./test.db")
+    except FileNotFoundError:
+        pass
 
 
 def test_register(create_db):
