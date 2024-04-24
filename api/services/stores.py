@@ -243,10 +243,10 @@ class StoreService:
         )
 
     async def get_package_meta(
-            self,
-            store_name: str,
-            package_name: str,
-            user: User,
+        self,
+        store_name: str,
+        package_name: str,
+        user: User,
     ):
         store_path: Path = self.stores_path / str(user.id) / store_name
 
