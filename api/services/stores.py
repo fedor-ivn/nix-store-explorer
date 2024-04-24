@@ -10,9 +10,9 @@ from logic.exceptions import (
     BrokenPackageException,
     InsecurePackageException,
     NotAvailableOnHostPlatformException,
+    PackageNotInstalledException,
     StillAliveException,
     UnfreeLicenceException,
-    PackageNotInstalledException
 )
 from store.models.package import Package
 from store.models.store import Store

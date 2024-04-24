@@ -9,9 +9,9 @@ from logic.exceptions import (
     BrokenPackageException,
     InsecurePackageException,
     NotAvailableOnHostPlatformException,
+    PackageNotInstalledException,
     StillAliveException,
     UnfreeLicenceException,
-    PackageNotInstalledException
 )
 
 
