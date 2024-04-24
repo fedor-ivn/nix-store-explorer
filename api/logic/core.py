@@ -1,17 +1,16 @@
+import json
 import subprocess
 from pathlib import Path
 from shutil import rmtree
 from subprocess import run
-import json
 
 from logic.exceptions import (
-    InsecurePackageException,
-    BrokenPackageException,
-    NotAvailableOnHostPlatformException,
     AttributeNotProvidedException,
-    UnfreeLicenceException,
+    BrokenPackageException,
+    InsecurePackageException,
+    NotAvailableOnHostPlatformException,
     StillAliveException,
-    PackageNotInstalledException
+    UnfreeLicenceException,
 )
 
 
@@ -64,7 +63,9 @@ def install_package(store: Path, package_name: str):
             raise NotAvailableOnHostPlatformException()
         elif "does not provide attribute" in process.stderr:
             raise AttributeNotProvidedException()
-        elif "has an unfree license (‘unfree’), refusing to evaluate." in process.stderr:
+        elif (
+            "has an unfree license (‘unfree’), refusing to evaluate." in process.stderr
+        ):
             raise UnfreeLicenceException()
         else:
             raise exception
@@ -91,7 +92,7 @@ def remove_package(store: Path, package_name: str):
 
 def _check_paths_are_valid(output, package_name: str):
     if any(not path["valid"] for path in output):
-        raise PackageNotInstalledException(f"Package nixpkgs#{package_name} is not installed")
+        raise Exception(f"Package nixpkgs#{package_name} is not installed")
 
 
 def get_closure_size(store: Path, package_name: str):
