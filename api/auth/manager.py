@@ -1,5 +1,4 @@
-from typing import Optional
-from typing import Tuple
+from typing import Tuple, Optional
 import bcrypt
 
 from fastapi import Depends, Request
