@@ -29,7 +29,8 @@ class Closure(BaseModel):
 
 
 class ClosuresDifference(BaseModel):
-    difference: list[PackageChange]
+    absent_in_package_1: list[str]
+    absent_in_package_2: list[str]
 
 
 class ClosureSize(BaseModel):

@@ -4,6 +4,35 @@ exclude = [
     "**/__pycache__"
 ]
 
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+   "UP",
+    # flake8-bugbear
+    # "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
+
+ignore = ["E501"]
+
+isort.known-first-party = [
+    "auth",
+    "db",
+    "dependencies",
+    "logic",
+    "repositories",
+    "services",
+    "store",
+    "utils",
+]
+
 [tool.poetry]
 name = "nix-store-web"
 version = "0.1.0"

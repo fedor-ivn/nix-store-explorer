@@ -1,17 +1,21 @@
 # pyright: reportAttributeAccessIssue = false
 # pylint: disable=no-member
 
-import streamlit as st
-import requests
 import extra_streamlit_components as stx
+import requests
+
+import streamlit as st
 
 base_url = "http://localhost:8000"
+
 
 @st.cache_resource(experimental_allow_widgets=True)
 def get_manager():
     return stx.CookieManager()
 
+
 cookie_manager = get_manager()
+
 
 def main_page():
     st.title("Nix store management system")
@@ -52,14 +56,14 @@ def main_page():
             st.error("Failed to delete store")
 
     st.header("Add package")
-    store_name = st.text_input(
-        "Enter store name", key="add_package_store_name_input")
+    store_name = st.text_input("Enter store name", key="add_package_store_name_input")
     package_name = st.text_input("Package name", key="package_name_input")
     if st.button("Add package"):
         if store_name and package_name:
             cookies = st.session_state["Set_cookies"]
             response = requests.post(
-                    f"{base_url}/store/{store_name}/package/{package_name}", cookies=cookies)
+                f"{base_url}/store/{store_name}/package/{package_name}", cookies=cookies
+            )
             if response.status_code == 200:
                 st.success("Package added successfully!")
             else:
@@ -67,29 +71,36 @@ def main_page():
         else:
             st.warning("Please enter both store name and package name")
 
-
     st.header("Delete package")
     delete_package_store_name_input_key = "delete_package_store_name_input"
-    store_name = st.text_input("Enter store name",
-                            key=delete_package_store_name_input_key)
+    store_name = st.text_input(
+        "Enter store name", key=delete_package_store_name_input_key
+    )
     delete_package_name_input_key = "delete_package_name_input"
     package_name = st.text_input("Package name", key=delete_package_name_input_key)
     if st.button("Delete package"):
         cookies = st.session_state["Set_cookies"]
         response = requests.delete(
-            f"{base_url}/store/{store_name}/package/{package_name}", cookies=cookies)
+            f"{base_url}/store/{store_name}/package/{package_name}", cookies=cookies
+        )
         if response.status_code == 200:
             st.success("Package deleted successfully!")
         else:
             st.error("Failed to delete package")
 
     st.header("Get package meta")
-    store_name = st.text_input("Enter store name", key="get_package_meta_store_name_input")
-    package_name = st.text_input("Enter package name", key="get_package_meta_package_name_input")
+    store_name = st.text_input(
+        "Enter store name", key="get_package_meta_store_name_input"
+    )
+    package_name = st.text_input(
+        "Enter package name", key="get_package_meta_package_name_input"
+    )
     if st.button("Get package meta"):
         if store_name and package_name:
             cookies = st.session_state["Set_cookies"]
-            response = requests.get(f"{base_url}/store/{store_name}/package/{package_name}", cookies=cookies)
+            response = requests.get(
+                f"{base_url}/store/{store_name}/package/{package_name}", cookies=cookies
+            )
             if response.status_code == 200:
                 package_meta = response.json()
                 st.write(f"Package {package_name} in store {store_name}:")
@@ -101,15 +112,17 @@ def main_page():
             st.warning("Please enter both store name and package name")
 
     st.header("Get paths difference")
-    store_name = st.text_input(
-        "Enter store name", key="get_paths_store_name_input")
+    store_name = st.text_input("Enter store name", key="get_paths_store_name_input")
     other_store_name = st.text_input(
-        "Enter other store name", key="get_paths_other_store_name_input")
+        "Enter other store name", key="get_paths_other_store_name_input"
+    )
     if st.button("Get paths difference"):
         if store_name and other_store_name:
             cookies = st.session_state["Set_cookies"]
             response = requests.get(
-                f"{base_url}/store/{store_name}/difference/{other_store_name}", cookies=cookies)
+                f"{base_url}/store/{store_name}/difference/{other_store_name}",
+                cookies=cookies,
+            )
             if response.status_code == 200:
                 paths_difference = response.json()
                 st.write("Paths absent in store 1:")
@@ -124,25 +137,31 @@ def main_page():
             st.warning("Please enter both store names")
 
     st.header("Get closures difference")
-    store_name = st.text_input(
-        "Enter store name", key="get_closures_store_name_input")
+    store_name = st.text_input("Enter store name", key="get_closures_store_name_input")
     package_name = st.text_input(
-        "Enter package name", key="get_closures_package_name_input")
+        "Enter package name", key="get_closures_package_name_input"
+    )
     other_store_name = st.text_input(
-        "Enter other store name", key="get_closures_other_store_name_input")
+        "Enter other store name", key="get_closures_other_store_name_input"
+    )
     other_package_name = st.text_input(
-        "Enter other package name", key="get_closures_other_package_name_input")
+        "Enter other package name", key="get_closures_other_package_name_input"
+    )
     if st.button("Get closures difference"):
         if store_name and package_name and other_store_name and other_package_name:
             cookies = st.session_state["Set_cookies"]
             response = requests.get(
-                f"{base_url}/store/{store_name}/package/{package_name}/closure-difference/{other_store_name}/{other_package_name}", cookies=cookies)
+                f"{base_url}/store/{store_name}/package/{package_name}/closure-difference/{other_store_name}/{other_package_name}",
+                cookies=cookies,
+            )
             if response.status_code == 200:
                 closures_difference = response.json()
                 st.write("Closure difference:")
                 for change in closures_difference["difference"]:
                     st.write(f"Package name: {change['package_name']}")
-                    st.write(f"Version update: {change['version_update']['old']} -> {change['version_update']['new']}")
+                    st.write(
+                        f"Version update: {change['version_update']['old']} -> {change['version_update']['new']}"
+                    )
                     st.write(f"Size update: {change['size_update']}")
                     st.write("---")
             else:
@@ -164,9 +183,7 @@ def login_page():
         )
         if response.status_code == 204:
             token = response.cookies["fastapiusersauth"]
-            cookies = {
-                "fastapiusersauth": token
-            }
+            cookies = {"fastapiusersauth": token}
             st.session_state["Set_cookies"] = cookies
             st.success("Login successful")
             st.session_state.is_authorized = True
@@ -187,7 +204,7 @@ def register_page():
             "password": password,
             "is_active": True,
             "is_superuser": False,
-            "is_verified": False
+            "is_verified": False,
         }
         response = requests.post(
             f"{base_url}/auth/register",
@@ -203,13 +220,11 @@ def logout():
     st.title("Logout")
     if st.button("Logout"):
         cookies = st.session_state["Set_cookies"]
-        response = requests.post(
-            f"{base_url}/auth/jwt/logout", cookies=cookies
-        )
+        response = requests.post(f"{base_url}/auth/jwt/logout", cookies=cookies)
         if response.status_code == 204:
             st.success("Logout successful")
             st.session_state.is_authorized = False
-            cookie_manager.delete('fastapiusersauth')
+            cookie_manager.delete("fastapiusersauth")
             st.session_state.delete("Set_cookies")
             st.experimental_rerun()
         else:
@@ -217,11 +232,10 @@ def logout():
 
 
 def main():
-    
     if "Set_cookies" in st.session_state:
         print(st.session_state["Set_cookies"])
-        cookie_manager.set('fastapiusersauth', st.session_state["Set_cookies"])
-        
+        cookie_manager.set("fastapiusersauth", st.session_state["Set_cookies"])
+
     st.sidebar.title("Navigation")
     if "is_authorized" not in st.session_state:
         st.session_state["is_authorized"] = False

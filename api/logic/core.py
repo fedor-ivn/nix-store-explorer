@@ -1,15 +1,16 @@
+import json
 import subprocess
 from pathlib import Path
 from shutil import rmtree
 from subprocess import run
-import json
 
 from logic.exceptions import (
-    InsecurePackageException,
-    BrokenPackageException,
-    NotAvailableOnHostPlatformException,
     AttributeNotProvidedException,
-    UnfreeLicenceException
+    BrokenPackageException,
+    InsecurePackageException,
+    NotAvailableOnHostPlatformException,
+    StillAliveException,
+    UnfreeLicenceException,
 )
 
 
@@ -62,7 +63,9 @@ def install_package(store: Path, package_name: str):
             raise NotAvailableOnHostPlatformException()
         elif "does not provide attribute" in process.stderr:
             raise AttributeNotProvidedException()
-        elif "has an unfree license (‘unfree’), refusing to evaluate." in process.stderr:
+        elif (
+            "has an unfree license (‘unfree’), refusing to evaluate." in process.stderr
+        ):
             raise UnfreeLicenceException()
         else:
             raise exception
@@ -78,9 +81,13 @@ def remove_package(store: Path, package_name: str):
         capture_output=True,
         text=True,
     )
-    if process.stderr:
+
+    try:
+        process.check_returncode()
+    except subprocess.CalledProcessError:
+        if "since it is still alive." in process.stderr:
+            raise StillAliveException()
         raise Exception(process.stderr)
-    process.check_returncode()
 
 
 def _check_paths_are_valid(output, package_name: str):
