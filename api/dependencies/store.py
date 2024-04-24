@@ -1,5 +1,5 @@
-from repositories.stores import StoreRepository, PackageRepository
-from services.stores import StoreService, PackageService
+from repositories.stores import PackageRepository, StoreRepository
+from services.stores import PackageService, StoreService
 
 
 def store_service_dependency():
