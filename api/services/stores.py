@@ -14,9 +14,8 @@ from logic.exceptions import (
     UnfreeLicenceException,
 )
 from store.models.package import Package
-from store.schemas.package import ClosuresDifference
 from store.models.store import Store
-from store.schemas.package import Closure
+from store.schemas.package import Closure, ClosuresDifference
 from store.schemas.package import Package as PackageSchema
 from utils.repository import AbstractRepository
 

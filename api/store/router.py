@@ -9,9 +9,7 @@ from services.stores import PackageService, StoreService
 from store.schemas.package import (
     ClosuresDifference,
     Package,
-    PackageChange,
     PackageMeta,
-    VersionUpdate,
 )
 from store.schemas.path import PathsDifference
 from store.schemas.store import Store
