@@ -20,3 +20,7 @@ class UnfreeLicenceException(Exception):
 
 class StillAliveException(Exception):
     pass
+
+
+class PackageNotInstalledException(Exception):
+    pass
