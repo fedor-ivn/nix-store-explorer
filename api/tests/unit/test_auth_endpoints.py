@@ -3,40 +3,44 @@ import asyncio
 import pytest
 from fastapi.testclient import TestClient
 
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
 
 from app import app  # noqa: E402
 from db.db import create_db_and_tables  # noqa: E402
 
 
 EXAMPLE_USER = {
-            "email": "user@example.com",
-            "password": "string",
-            "is_active": True,
-            "is_superuser": False,
-            "is_verified": False,
-        }
+    "email": "user@example.com",
+    "password": "string",
+    "is_active": True,
+    "is_superuser": False,
+    "is_verified": False,
+}
 
 
 REGISTER_RESPONSE = {
-        "id": 1,
-        "email": "user@example.com",
-        "is_active": True,
-        "is_superuser": False,
-        "is_verified": False,
-    }
+    "id": 1,
+    "email": "user@example.com",
+    "is_active": True,
+    "is_superuser": False,
+    "is_verified": False,
+}
 
 
 LOGIN_DATA = {
-            "username": "user@example.com",
-            "password": "string",
-        }
+    "username": "user@example.com",
+    "password": "string",
+}
 
 
 @pytest.fixture
 def client():
     asyncio.run(create_db_and_tables())
-    return TestClient(app)
+    yield TestClient(app)
+    try:
+        os.remove("test.db")
+    except FileNotFoundError:
+        pass
 
 
 def test_register(client):
@@ -53,7 +57,7 @@ def test_login(client):
         "/auth/register",
         json=EXAMPLE_USER,
     )
-    
+
     response = client.post(
         "/auth/jwt/login",
         data=LOGIN_DATA,

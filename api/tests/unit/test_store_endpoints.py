@@ -16,23 +16,27 @@ def client():
 
     client = TestClient(app)
 
+    new_user = {
+        "email": "user@example.com",
+        "password": "string",
+        "is_active": True,
+        "is_superuser": False,
+        "is_verified": False,
+    }
+
+    login_data = {
+        "username": "user@example.com",
+        "password": "string",
+    }
+
     client.post(
         "/auth/register",
-        json={
-            "email": "user@example.com",
-            "password": "string",
-            "is_active": True,
-            "is_superuser": False,
-            "is_verified": False,
-        },
+        json=new_user,
     )
 
     login_response = client.post(
         "/auth/jwt/login",
-        data={
-            "username": "user@example.com",
-            "password": "string",
-        },
+        data=login_data,
     )
 
     token = login_response.cookies["fastapiusersauth"]
@@ -42,7 +46,7 @@ def client():
     yield client
 
     try:
-        os.remove("./test.db")
+        os.remove("test.db")
     except FileNotFoundError:
         pass
 
@@ -143,6 +147,9 @@ def test_delete_package(client):
         "store_id": 1,
         "closure": {"packages": []},
     }
+
+
+### methods not implemented yet
 
 
 def test_get_paths_difference(client):

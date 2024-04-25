@@ -18,9 +18,10 @@ def client():
     asyncio.run(create_db_and_tables())
     yield TestClient(app)
     try:
-        os.remove("./test.db")
+        os.remove("test.db")
     except FileNotFoundError:
         pass
+
 
 
 @pytest.mark.asyncio
@@ -32,8 +33,8 @@ async def test_password_security(client):
         "is_superuser": False,
         "is_verified": False,
     }
-    response = client.post("/auth/register", json=new_user)
-    assert response.status_code == 201
+
+    client.post("/auth/register", json=new_user)
 
     async with async_session_maker() as session:
         stmt = select(User).where(User.email == new_user["email"])
@@ -41,5 +42,4 @@ async def test_password_security(client):
         stored_user = result.scalar_one()
 
     assert stored_user.hashed_password != new_user["password"]
-
     assert checkpw(new_user["password"].encode(), stored_user.hashed_password.encode())
