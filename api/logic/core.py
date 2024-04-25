@@ -93,7 +93,7 @@ def remove_package(store: Path, package_name: str):
 
 def _check_paths_are_valid(output, package_name: str):
     if any(not path["valid"] for path in output):
-        raise PackageNotInstalledException
+        raise PackageNotInstalledException()
 
 
 def get_closure_size(store: Path, package_name: str):
