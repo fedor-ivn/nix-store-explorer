@@ -53,6 +53,19 @@
           '';
         };
 
+        ci-pyright = pkgs.writeShellApplication {
+          name = "ci-pyright";
+          runtimeInputs = with pkgs; [
+            poetry
+            nodePackages.pyright
+          ];
+          text = ''
+            set -x
+            poetry install
+            poetry run pyright
+          '';
+        };
+
         tests = pkgs.writeShellApplication {
           name = "run-tests";
           runtimeInputs = [ api.dependencyEnv ];
@@ -60,7 +73,7 @@
         };
       in {
         packages = {
-          inherit api ui tests ci-bandit ci-ruff;
+          inherit api ui tests ci-bandit ci-ruff ci-pyright;
           default = api;
         };
         devShells.default = with pkgs; mkShell {

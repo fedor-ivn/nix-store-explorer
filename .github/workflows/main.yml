@@ -33,5 +33,4 @@ jobs:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock', 'pyproject.toml', 'poetry.lock') }}
           paths: |
             ~/.cache/pypoetry
-      - run: nix develop --command poetry install
-      - run: nix develop --command poetry run pyright
+      - run: nix run .#ci-pyright
