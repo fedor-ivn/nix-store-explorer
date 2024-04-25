@@ -3,37 +3,22 @@ import asyncio
 import pytest
 from fastapi.testclient import TestClient
 
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 
 from app import app  # noqa: E402
 from db.db import create_db_and_tables  # noqa: E402
 
-client = TestClient(app)
 
-
-@pytest.fixture
-def create_db():
-    asyncio.run(create_db_and_tables())
-    yield
-    try:
-        os.remove("./test.db")
-    except FileNotFoundError:
-        pass
-
-
-def test_register(create_db):
-    response = client.post(
-        "/auth/register",
-        json={
+EXAMPLE_USER = {
             "email": "user@example.com",
             "password": "string",
             "is_active": True,
             "is_superuser": False,
             "is_verified": False,
-        },
-    )
-    assert response.status_code == 201
-    assert response.json() == {
+        }
+
+
+REGISTER_RESPONSE = {
         "id": 1,
         "email": "user@example.com",
         "is_active": True,
@@ -42,47 +27,50 @@ def test_register(create_db):
     }
 
 
-def test_login(create_db):
-    client.post(
-        "/auth/register",
-        json={
-            "email": "user@example.com",
-            "password": "string",
-            "is_active": True,
-            "is_superuser": False,
-            "is_verified": False,
-        },
-    )
-
-    response = client.post(
-        "/auth/jwt/login",
-        data={
+LOGIN_DATA = {
             "username": "user@example.com",
             "password": "string",
-        },
+        }
+
+
+@pytest.fixture
+def client():
+    asyncio.run(create_db_and_tables())
+    return TestClient(app)
+
+
+def test_register(client):
+    response = client.post(
+        "/auth/register",
+        json=EXAMPLE_USER,
+    )
+    assert response.status_code == 201
+    assert response.json() == REGISTER_RESPONSE
+
+
+def test_login(client):
+    client.post(
+        "/auth/register",
+        json=EXAMPLE_USER,
+    )
+    
+    response = client.post(
+        "/auth/jwt/login",
+        data=LOGIN_DATA,
     )
 
     assert response.status_code == 204
 
 
-def test_logout(create_db):
+def test_logout(client):
     client.post(
         "/auth/register",
-        json={
-            "email": "user@example.com",
-            "password": "string",
-            "is_active": True,
-            "is_superuser": False,
-            "is_verified": False,
-        },
+        json=EXAMPLE_USER,
     )
 
     login_response = client.post(
         "/auth/jwt/login",
-        data={
-            "username": "user@example.com",
-            "password": "string",
-        },
+        data=LOGIN_DATA,
     )
 
     cookies = login_response.cookies["fastapiusersauth"]
