@@ -16,16 +16,35 @@
           mkPoetryApplication;
       in {
         packages = {
-          default = mkPoetryApplication {
+          api = mkPoetryApplication {
             projectDir = self;
+            groups = [ "api" ];
           };
+          ui = let
+            app = mkPoetryApplication {
+              projectDir = self;
+              groups = [ "ui" ];
+              preferWheels = true;
+            };
+          in pkgs.writeShellApplication {
+            name = "nix-store-explorer-ui";
+            runtimeInputs = [ app.dependencyEnv ];
+            text = ''
+              streamlit run ${app.dependencyEnv}/lib/python3.11/site-packages/ui/frontend.py
+            '';
+          };
+
+          default = self.packages.${system}.api;
         };
         devShells.default = with pkgs; mkShell {
-          inputsFrom = [ self.packages.${system}.default ];
+          inputsFrom = [
+            self.packages.${system}.api
+          ];
           packages = [
             poetry
             ruff
             nodePackages.pyright
+            self.packages.${system}.ui
           ];
           shellHook = "source $(poetry env info --path)/bin/activate";
         };
