@@ -4,10 +4,9 @@ import pytest
 import os
 import shutil
 
-from app import app
-
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
 
+from app import app  # noqa: E402
 from db.db import create_db_and_tables  # noqa: E402
 
 
@@ -41,7 +40,12 @@ def client():
     client = TestClient(app, cookies={"fastapiusersauth": token})
 
     yield client
-    os.remove("./test.db")
+
+    try:
+        os.remove("./test.db")
+    except FileNotFoundError:
+        pass
+
     shutil.rmtree("stores", ignore_errors=True)
 
 

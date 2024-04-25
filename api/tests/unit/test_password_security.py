@@ -5,11 +5,11 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 from bcrypt import checkpw
 
-from app import app
 from auth.schemas import User
 
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
 
+from app import app  # noqa: E402
 from db.db import async_session_maker, create_db_and_tables  # noqa: E402
 
 

@@ -3,10 +3,9 @@ import asyncio
 import pytest
 from fastapi.testclient import TestClient
 
-from app import app
-
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
 
+from app import app  # noqa: E402
 from db.db import create_db_and_tables  # noqa: E402
 
 client = TestClient(app)
