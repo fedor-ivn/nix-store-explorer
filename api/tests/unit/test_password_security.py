@@ -24,7 +24,7 @@ def client():
 
 
 @pytest.mark.asyncio
-async def test_register_user(client):
+async def test_password_security(client):
     new_user = {
         "email": "user@example.com",
         "password": "string",
