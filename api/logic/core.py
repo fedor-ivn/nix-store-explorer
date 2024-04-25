@@ -91,7 +91,7 @@ def remove_package(store: Path, package_name: str):
         raise Exception(process.stderr)
 
 
-def _check_paths_are_valid(output, package_name: str):
+def _check_paths_are_valid(output):
     if any(not path["valid"] for path in output):
         raise PackageNotInstalledException()
 
@@ -113,7 +113,7 @@ def get_closure_size(store: Path, package_name: str):
     process.check_returncode()
 
     output = json.loads(process.stdout)
-    _check_paths_are_valid(output, package_name)
+    _check_paths_are_valid(output)
 
     closure_size = sum(path["closureSize"] for path in output)
     return closure_size
@@ -136,6 +136,6 @@ def get_closure(store: Path, package_name: str) -> list[str]:
     process.check_returncode()
 
     output = json.loads(process.stdout)
-    _check_paths_are_valid(output, package_name)
+    _check_paths_are_valid(output)
 
     return list(set(path["path"] for path in output))
