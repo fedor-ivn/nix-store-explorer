@@ -11,8 +11,7 @@ jobs:
       - uses: nix-community/cache-nix-action@v5
         with:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
-      - run: nix develop --command ruff format --check
-      - run: nix develop --command ruff check
+      - run: nix run .#ci-ruff
 
   bandit:
     runs-on: ubuntu-latest
@@ -22,7 +21,7 @@ jobs:
       - uses: nix-community/cache-nix-action@v5
         with:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
-      - run: nix run .#bandit
+      - run: nix run .#ci-bandit
 
   pyright:
     runs-on: ubuntu-latest
@@ -34,5 +33,4 @@ jobs:
           primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock', 'pyproject.toml', 'poetry.lock') }}
           paths: |
             ~/.cache/pypoetry
-      - run: nix develop --command poetry install
-      - run: nix develop --command poetry run pyright
+      - run: nix run .#ci-pyright
