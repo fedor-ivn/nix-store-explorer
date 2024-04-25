@@ -6,6 +6,7 @@ import requests
 import streamlit as st
 
 base_url = "http://localhost:8000"
+TIMEOUT = 5
 
 
 @st.cache_resource(experimental_allow_widgets=True)
@@ -23,7 +24,9 @@ def main_page():
     store_name = st.text_input("Store name", key=store_name_input_key)
     if st.button("Create store"):
         cookies = st.session_state["Set_cookies"]
-        response = requests.post(f"{base_url}/store/{store_name}", cookies=cookies)
+        response = requests.post(
+            f"{base_url}/store/{store_name}", cookies=cookies, timeout=TIMEOUT
+        )
         if response.status_code == 200:
             st.success("Store created successfully!")
         else:
@@ -34,7 +37,9 @@ def main_page():
     store_name = st.text_input("Enter store name", key=get_store_name_input_key)
     if st.button("Get store"):
         cookies = st.session_state["Set_cookies"]
-        response = requests.get(f"{base_url}/store/{store_name}", cookies=cookies)
+        response = requests.get(
+            f"{base_url}/store/{store_name}", cookies=cookies, timeout=TIMEOUT
+        )
         if response.status_code == 200:
             store_data = response.json()
             st.write(f"Store ID: {store_data['id']}")
@@ -48,7 +53,9 @@ def main_page():
     store_name = st.text_input("Enter store name", key=delete_store_name_input_key)
     if st.button("Delete store"):
         cookies = st.session_state["Set_cookies"]
-        response = requests.delete(f"{base_url}/store/{store_name}", cookies=cookies)
+        response = requests.delete(
+            f"{base_url}/store/{store_name}", cookies=cookies, timeout=TIMEOUT
+        )
         if response.status_code == 200:
             st.success("Store deleted successfully!")
         else:
@@ -60,8 +67,10 @@ def main_page():
     if st.button("Add package"):
         if store_name and package_name:
             cookies = st.session_state["Set_cookies"]
-            response = requests.post(
-                f"{base_url}/store/{store_name}/package/{package_name}", cookies=cookies
+            response = requests.post(  # nosec request_without_timeout
+                f"{base_url}/store/{store_name}/package/{package_name}",
+                cookies=cookies,
+                timeout=None,
             )
             if response.status_code == 200:
                 st.success("Package added successfully!")
@@ -80,7 +89,9 @@ def main_page():
     if st.button("Delete package"):
         cookies = st.session_state["Set_cookies"]
         response = requests.delete(
-            f"{base_url}/store/{store_name}/package/{package_name}", cookies=cookies
+            f"{base_url}/store/{store_name}/package/{package_name}",
+            cookies=cookies,
+            timeout=TIMEOUT,
         )
         if response.status_code == 200:
             st.success("Package deleted successfully!")
@@ -98,7 +109,9 @@ def main_page():
         if store_name and package_name:
             cookies = st.session_state["Set_cookies"]
             response = requests.get(
-                f"{base_url}/store/{store_name}/package/{package_name}", cookies=cookies
+                f"{base_url}/store/{store_name}/package/{package_name}",
+                cookies=cookies,
+                timeout=TIMEOUT,
             )
             if response.status_code == 200:
                 package_meta = response.json()
@@ -121,6 +134,7 @@ def main_page():
             response = requests.get(
                 f"{base_url}/store/{store_name}/difference/{other_store_name}",
                 cookies=cookies,
+                timeout=TIMEOUT,
             )
             if response.status_code == 200:
                 paths_difference = response.json()
@@ -152,6 +166,7 @@ def main_page():
             response = requests.get(
                 f"{base_url}/store/{store_name}/package/{package_name}/closure-difference/{other_store_name}/{other_package_name}",
                 cookies=cookies,
+                timeout=TIMEOUT,
             )
             if response.status_code == 200:
                 closures_difference = response.json()
@@ -179,6 +194,7 @@ def login_page():
         response = requests.post(
             f"{base_url}/auth/jwt/login",
             data={"username": email, "password": password},
+            timeout=TIMEOUT,
         )
         if response.status_code == 204:
             token = response.cookies["fastapiusersauth"]
@@ -206,8 +222,7 @@ def register_page():
             "is_verified": False,
         }
         response = requests.post(
-            f"{base_url}/auth/register",
-            json=payload,
+            f"{base_url}/auth/register", json=payload, timeout=TIMEOUT
         )
         if response.status_code == 201:
             st.success("Registration successful")
@@ -219,7 +234,9 @@ def logout():
     st.title("Logout")
     if st.button("Logout"):
         cookies = st.session_state["Set_cookies"]
-        response = requests.post(f"{base_url}/auth/jwt/logout", cookies=cookies)
+        response = requests.post(
+            f"{base_url}/auth/jwt/logout", cookies=cookies, timeout=TIMEOUT
+        )
         if response.status_code == 204:
             st.success("Logout successful")
             st.session_state.is_authorized = False
