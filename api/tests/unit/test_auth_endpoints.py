@@ -1,12 +1,13 @@
-from fastapi.testclient import TestClient
+import os
 import asyncio
 import pytest
-import os
+from fastapi.testclient import TestClient
+
+from app import app
 
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
 
-from db.db import create_db_and_tables
-from app import app
+from db.db import create_db_and_tables  # noqa: E402
 
 client = TestClient(app)
 
@@ -40,6 +41,7 @@ def test_register(create_db):
         "is_superuser": False,
         "is_verified": False,
     }
+
 
 def test_login(create_db):
     client.post(
@@ -83,7 +85,7 @@ def test_logout(create_db):
             "password": "string",
         },
     )
-    
+
     cookies = login_response.cookies["fastapiusersauth"]
 
     response = client.post(

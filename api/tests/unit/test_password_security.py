@@ -3,17 +3,14 @@ import os
 import asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from bcrypt import checkpw, gensalt
-
-
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
-
+from bcrypt import checkpw
 
 from app import app
 from auth.schemas import User
-from db.db import async_session_maker
-from db.db import create_db_and_tables
+
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
+
+from db.db import async_session_maker, create_db_and_tables  # noqa: E402
 
 
 @pytest.fixture
@@ -29,12 +26,12 @@ def client():
 @pytest.mark.asyncio
 async def test_register_user(client):
     new_user = {
-            "email": "user@example.com",
-            "password": "string",
-            "is_active": True,
-            "is_superuser": False,
-            "is_verified": False,
-        }
+        "email": "user@example.com",
+        "password": "string",
+        "is_active": True,
+        "is_superuser": False,
+        "is_verified": False,
+    }
     response = client.post("/auth/register", json=new_user)
     assert response.status_code == 201
 
