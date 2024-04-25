@@ -14,37 +14,45 @@
         pkgs = import nixpkgs { inherit system; };
         inherit (poetry2nix.lib.mkPoetry2Nix { inherit pkgs; })
           mkPoetryApplication;
+
+        api = mkPoetryApplication {
+          projectDir = self;
+          groups = [ "api" ];
+        };
+
+        uiEnv = (mkPoetryApplication {
+          projectDir = self;
+          groups = [ "ui" ];
+          preferWheels = true;
+        }).dependencyEnv;
+        ui = pkgs.writeShellApplication {
+          name = "nix-store-explorer-ui";
+          runtimeInputs = [ uiEnv ];
+          text = ''
+            streamlit run ${uiEnv}/lib/python3.11/site-packages/ui/frontend.py
+          '';
+        };
+
+        tests = pkgs.writeShellApplication {
+          name = "run-tests";
+          runtimeInputs = [ api.dependencyEnv ];
+          text = "pytest";
+        };
       in {
         packages = {
-          api = mkPoetryApplication {
-            projectDir = self;
-            groups = [ "api" ];
-          };
-          ui = let
-            app = mkPoetryApplication {
-              projectDir = self;
-              groups = [ "ui" ];
-              preferWheels = true;
-            };
-          in pkgs.writeShellApplication {
-            name = "nix-store-explorer-ui";
-            runtimeInputs = [ app.dependencyEnv ];
-            text = ''
-              streamlit run ${app.dependencyEnv}/lib/python3.11/site-packages/ui/frontend.py
-            '';
-          };
-
-          default = self.packages.${system}.api;
+          inherit api ui tests;
+          default = api;
         };
         devShells.default = with pkgs; mkShell {
           inputsFrom = [
-            self.packages.${system}.api
+            api
           ];
           packages = [
             poetry
             ruff
             nodePackages.pyright
-            self.packages.${system}.ui
+
+            ui
           ];
           shellHook = "source $(poetry env info --path)/bin/activate";
         };
