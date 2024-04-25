@@ -29,7 +29,7 @@
           name = "nix-store-explorer-ui";
           runtimeInputs = [ uiEnv ];
           text = ''
-            streamlit run ${uiEnv}/lib/python3.11/site-packages/ui/frontend.py
+            streamlit run ${uiEnv}/lib/python3.11/site-packages/src/frontend.py
           '';
         };
 

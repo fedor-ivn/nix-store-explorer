@@ -5,7 +5,6 @@ description = ""
 authors = ["ilnarkhasanov <4sitescarp@gmail.com>"]
 packages = [
   { include = "src" },
-  { include = "ui" },
 ]
 
 [tool.poetry.dependencies]
