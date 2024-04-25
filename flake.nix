@@ -33,6 +33,16 @@
           '';
         };
 
+        bandit = pkgs.writeShellApplication {
+          name = "run-bandit";
+          runtimeInputs = [
+            # cannot build `bandit` from source via `poetry2nix`, so use
+            # the nixpkgs version
+            pkgs.python311Packages.bandit
+          ];
+          text = "bandit -r src";
+        };
+
         tests = pkgs.writeShellApplication {
           name = "run-tests";
           runtimeInputs = [ api.dependencyEnv ];
@@ -40,7 +50,7 @@
         };
       in {
         packages = {
-          inherit api ui tests;
+          inherit api ui tests bandit;
           default = api;
         };
         devShells.default = with pkgs; mkShell {

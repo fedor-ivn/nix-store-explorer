@@ -1,8 +1,7 @@
 import json
-import subprocess
 from pathlib import Path
 from shutil import rmtree
-from subprocess import run
+from subprocess import CalledProcessError, run  # nosec import_subprocess
 
 from src.logic.exceptions import (
     AttributeNotProvidedException,
@@ -13,6 +12,14 @@ from src.logic.exceptions import (
     StillAliveException,
     UnfreeLicenceException,
 )
+
+
+def _run_nix(*args: str):
+    return run(  # nosec subprocess_without_shell_equals_true
+        ["nix"] + list(args),
+        capture_output=True,
+        text=True,
+    )
 
 
 def create_store(store: Path):
@@ -40,22 +47,17 @@ def get_paths(store: Path):
 
 
 def install_package(store: Path, package_name: str):
-    process = run(
-        [
-            "nix",
-            "build",
-            "--json",
-            "--no-link",
-            "--store",
-            str(store),
-            f"nixpkgs#{package_name}",
-        ],
-        capture_output=True,
-        text=True,
+    process = _run_nix(
+        "build",
+        "--json",
+        "--no-link",
+        "--store",
+        str(store),
+        f"nixpkgs#{package_name}",
     )
     try:
         process.check_returncode()
-    except subprocess.CalledProcessError as exception:
+    except CalledProcessError as exception:
         if "is marked as insecure, refusing to evaluate." in process.stderr:
             raise InsecurePackageException()
         elif "is marked as broken, refusing to evaluate." in process.stderr:
@@ -77,15 +79,17 @@ def install_package(store: Path, package_name: str):
 
 
 def remove_package(store: Path, package_name: str):
-    process = run(
-        ["nix", "store", "delete", "--store", str(store), f"nixpkgs#{package_name}"],
-        capture_output=True,
-        text=True,
+    process = _run_nix(
+        "store",
+        "delete",
+        "--store",
+        str(store),
+        f"nixpkgs#{package_name}",
     )
 
     try:
         process.check_returncode()
-    except subprocess.CalledProcessError:
+    except CalledProcessError:
         if "since it is still alive." in process.stderr:
             raise StillAliveException()
         raise Exception(process.stderr)
@@ -97,18 +101,13 @@ def _check_paths_are_valid(output):
 
 
 def get_closure_size(store: Path, package_name: str):
-    process = run(
-        [
-            "nix",
-            "path-info",
-            "--json",
-            "--store",
-            str(store),
-            "--closure-size",
-            f"nixpkgs#{package_name}",
-        ],
-        capture_output=True,
-        text=True,
+    process = _run_nix(
+        "path-info",
+        "--json",
+        "--store",
+        str(store),
+        "--closure-size",
+        f"nixpkgs#{package_name}",
     )
     process.check_returncode()
 
@@ -120,18 +119,13 @@ def get_closure_size(store: Path, package_name: str):
 
 
 def get_closure(store: Path, package_name: str) -> list[str]:
-    process = run(
-        [
-            "nix",
-            "path-info",
-            "--json",
-            "--store",
-            str(store),
-            "--recursive",
-            f"nixpkgs#{package_name}",
-        ],
-        capture_output=True,
-        text=True,
+    process = _run_nix(
+        "path-info",
+        "--json",
+        "--store",
+        str(store),
+        "--recursive",
+        f"nixpkgs#{package_name}",
     )
     process.check_returncode()
 
