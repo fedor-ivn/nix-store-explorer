@@ -3,7 +3,6 @@
 
 import extra_streamlit_components as stx
 import requests
-
 import streamlit as st
 
 base_url = "http://localhost:8000"
