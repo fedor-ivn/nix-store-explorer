@@ -24,6 +24,7 @@ nix-store-explorer = "src.app:main"
 
 [tool.poetry.group.ui.dependencies]
 streamlit = "^1.33.0"
+extra-streamlit-components = "^0.1.71"
 
 [build-system]
 requires = ["poetry-core"]
