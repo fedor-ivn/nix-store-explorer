@@ -3,9 +3,9 @@ from pathlib import Path
 from fastapi import HTTPException
 from sqlalchemy import Row
 
-from auth.schemas import User
-from logic import core as core_logic
-from logic.exceptions import (
+from src.auth.schemas import User
+from src.logic import core as core_logic
+from src.logic.exceptions import (
     AttributeNotProvidedException,
     BrokenPackageException,
     InsecurePackageException,
@@ -14,11 +14,11 @@ from logic.exceptions import (
     StillAliveException,
     UnfreeLicenceException,
 )
-from store.models.package import Package
-from store.models.store import Store
-from store.schemas.package import Closure, ClosuresDifference, PackageMeta
-from store.schemas.package import Package as PackageSchema
-from utils.repository import AbstractRepository
+from src.store.models.package import Package
+from src.store.models.store import Store
+from src.store.schemas.package import Closure, ClosuresDifference, PackageMeta
+from src.store.schemas.package import Package as PackageSchema
+from src.utils.repository import AbstractRepository
 
 
 class PackageService:

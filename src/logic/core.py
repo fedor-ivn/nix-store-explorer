@@ -4,7 +4,7 @@ from pathlib import Path
 from shutil import rmtree
 from subprocess import run
 
-from logic.exceptions import (
+from src.logic.exceptions import (
     AttributeNotProvidedException,
     BrokenPackageException,
     InsecurePackageException,

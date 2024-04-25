@@ -5,8 +5,8 @@ from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin
 from fastapi_users.password import PasswordHelperProtocol
 
-from auth.database import get_user_db
-from auth.schemas import User
+from src.auth.database import get_user_db
+from src.auth.schemas import User
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):

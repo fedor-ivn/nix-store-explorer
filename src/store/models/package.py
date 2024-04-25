@@ -1,9 +1,9 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from db.db import Base
-from store.schemas.package import Closure
-from store.schemas.package import Package as PackageSchema
+from src.db.db import Base
+from src.store.schemas.package import Closure
+from src.store.schemas.package import Package as PackageSchema
 
 
 class Package(Base):

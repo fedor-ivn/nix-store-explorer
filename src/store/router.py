@@ -2,17 +2,17 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from auth.auth import fastapi_users
-from auth.schemas import User
-from dependencies.store import package_service_dependency, store_service_dependency
-from services.stores import PackageService, StoreService
-from store.schemas.package import (
+from src.auth.auth import fastapi_users
+from src.auth.schemas import User
+from src.dependencies.store import package_service_dependency, store_service_dependency
+from src.services.stores import PackageService, StoreService
+from src.store.schemas.package import (
     ClosuresDifference,
     Package,
     PackageMeta,
 )
-from store.schemas.path import PathsDifference
-from store.schemas.store import Store
+from src.store.schemas.path import PathsDifference
+from src.store.schemas.store import Store
 
 router = APIRouter(prefix="/store")
 current_user = fastapi_users.current_user()

@@ -4,7 +4,7 @@ from typing import Sequence
 from sqlalchemy import Row, insert, select
 from sqlalchemy import delete as sqlalchemy_delete
 
-from db.db import async_session_maker
+from src.db.db import async_session_maker
 
 
 class AbstractRepository(ABC):

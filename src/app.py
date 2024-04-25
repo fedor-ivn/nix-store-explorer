@@ -3,10 +3,10 @@ import asyncio
 import uvicorn
 from fastapi import FastAPI
 
-from auth.auth import auth_backend, fastapi_users
-from auth.schemas import UserCreate, UserRead
-from db.db import create_db_and_tables
-from store.router import router as store_router
+from src.auth.auth import auth_backend, fastapi_users
+from src.auth.schemas import UserCreate, UserRead
+from src.db.db import create_db_and_tables
+from src.store.router import router as store_router
 
 app = FastAPI()
 
@@ -25,7 +25,6 @@ app.include_router(
 )
 
 
-if __name__ == "__main__":
+def main():
     asyncio.run(create_db_and_tables())
-
     uvicorn.run(app, host="localhost", port=8000)

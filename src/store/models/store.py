@@ -1,8 +1,8 @@
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from db.db import Base
-from store.schemas.store import Store as StoreSchema
+from src.db.db import Base
+from src.store.schemas.store import Store as StoreSchema
 
 
 class Store(Base):
