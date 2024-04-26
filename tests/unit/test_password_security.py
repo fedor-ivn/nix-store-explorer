@@ -23,7 +23,6 @@ def client():
         pass
 
 
-
 @pytest.mark.asyncio
 async def test_password_security(client):
     new_user = {
