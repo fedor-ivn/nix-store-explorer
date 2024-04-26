@@ -2,7 +2,7 @@
 .direnv
 .idea/
 stores/
-api/database.db
+**/database.db
 **/.pytest_cache
 **/.coverage
 .vscode
