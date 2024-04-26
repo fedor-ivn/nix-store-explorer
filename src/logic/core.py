@@ -32,7 +32,7 @@ def remove_store(store: Path):
         if exception_type != PermissionError:
             raise error
 
-        Path(path).parent.chmod(0o755)
+        Path(path).chmod(0o755)
         function(path)
 
     rmtree(store, onerror=handle_permission_error)
@@ -86,7 +86,6 @@ def remove_package(store: Path, package_name: str):
         str(store),
         f"nixpkgs#{package_name}",
     )
-
     try:
         process.check_returncode()
     except CalledProcessError:

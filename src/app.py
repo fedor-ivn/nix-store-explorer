@@ -28,3 +28,7 @@ app.include_router(
 def main():
     asyncio.run(create_db_and_tables())
     uvicorn.run(app, host="localhost", port=8000)
+
+
+if __name__ == "__main__":
+    main()
