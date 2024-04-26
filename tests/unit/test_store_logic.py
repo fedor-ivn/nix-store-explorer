@@ -1,8 +1,10 @@
 from pathlib import Path
 import shutil
 import pytest
-from unittest.mock import patch
-import src.store.logic as logic
+from unittest.mock import patch, MagicMock
+import src.logic.core as logic
+from subprocess import CalledProcessError
+from src.logic.exceptions import StillAliveException
 
 
 @pytest.fixture
@@ -36,7 +38,7 @@ def test_get_paths(store):
 def test_install_package(store):
     package_name = "package_name"
 
-    with patch("store.logic.run") as mock_run:
+    with patch("src.logic.core.run") as mock_run:
         mock_run.return_value.stdout = '[{"outputs": {"out": "path"}}]'
         path = logic.install_package(store, package_name)
         assert path == "path"
@@ -58,7 +60,7 @@ def test_install_package(store):
 def test_remove_package(store):
     package_name = "package_name"
 
-    with patch("store.logic.run") as mock_run:
+    with patch("src.logic.core.run") as mock_run:
         mock_run.return_value.stderr = False
         logic.remove_package(store, package_name)
         mock_run.assert_called_with(
@@ -75,24 +77,23 @@ def test_remove_package(store):
         )
 
 
-def test_remove_package_error(store):
+def test_remove_package_still_alive(store):
     package_name = "package_name"
 
-    with patch("store.logic.run") as mock_run:
-        mock_run.return_value.stderr = "error"
-        with pytest.raises(Exception):
+    with patch("src.logic.core._run_nix") as mock_run:
+        mock_error = CalledProcessError(1, "cmd")
+        mock_run.return_value.check_returncode.side_effect = mock_error
+        mock_run.return_value.stderr = "since it is still alive."
+
+        with pytest.raises(StillAliveException):
             logic.remove_package(store, package_name)
+
         mock_run.assert_called_with(
-            [
-                "nix",
                 "store",
                 "delete",
                 "--store",
                 str(store),
                 f"nixpkgs#{package_name}",
-            ],
-            capture_output=True,
-            text=True,
         )
 
 
@@ -102,7 +103,7 @@ def test_check_paths_are_valid(store):
 
 
 def test_get_closure_size(store):
-    with patch("store.logic.run") as mock_run:
+    with patch("src.logic.core.run") as mock_run:
         mock_run.return_value.stdout = (
             '[{"closureSize": 1, "valid": true}, {"closureSize": 1, "valid": true}]'
         )
@@ -125,7 +126,7 @@ def test_get_closure_size(store):
 
 
 def test_get_closure(store):
-    with patch("store.logic.run") as mock_run:
+    with patch("src.logic.core.run") as mock_run:
         mock_run.return_value.stdout = (
             '[{"path": "path1", "valid": true}, {"path": "path2", "valid": true}]'
         )
@@ -144,4 +145,4 @@ def test_get_closure(store):
             text=True,
         )
 
-        assert output == {"path1", "path2"}
+        assert set(output) == {"path1", "path2"}

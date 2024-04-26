@@ -3,26 +3,31 @@ import asyncio
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
-from src.store.models.store import Store
 
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
 
+from src.store.models.store import Store  # noqa: E402
 from src.utils.repository import SQLAlchemyRepository  # noqa: E402
 from src.db.db import create_db_and_tables, async_session_maker  # noqa: E402
 
 
 @pytest.fixture
-def client():
+def repository():
     asyncio.run(create_db_and_tables())
-    yield TestClient()
+    repository = SQLAlchemyRepository()
+    repository.model = Store
+
+    yield repository
+    try:
+        os.remove("test.db")
+    except FileNotFoundError:
+        pass
 
 
 @pytest.mark.asyncio
-async def test_add_one():
-    repository = SQLAlchemyRepository()
-    entity = await repository.add_one({"name": "store"})
-    assert entity.id == 1
-    assert entity.name == "store"
+async def test_add_one(repository):
+    store_id = await repository.add_one({"id": 1, "name": "store", "owner_id": 2})
+    assert store_id == 1
 
     async with async_session_maker() as session:
         stmt = select(Store).where(Store.id == 1)
@@ -34,37 +39,37 @@ async def test_add_one():
 
 
 @pytest.mark.asyncio
-async def test_get_one():
-    repository = SQLAlchemyRepository()
-    await repository.add_one({"name": "store"})
+async def test_get_one(repository):
+    await repository.add_one({"id": 1, "name": "store", "owner_id": 2})
 
-    entities = repository.get_one({"id": 1})
+    store = await repository.get_one({"id": 1})
 
-    assert entities.id == 1
-    assert entities.name == "store"
+    assert store[0].id == 1
+    assert store[0].name == "store"
+    assert store[0].owner_id == 2
 
 
 @pytest.mark.asyncio
-async def test_get_all():
-    repository = SQLAlchemyRepository()
-    await repository.add_one({"name": "store1"})
-    await repository.add_one({"name": "store2"})
+async def test_get_all(repository):
+    await repository.add_one({"id": 1, "name": "store1", "owner_id": 2})
+    await repository.add_one({"id": 2, "name": "store2", "owner_id": 2})
 
-    entities = repository.get_all()
+    entities = await repository.get_all({"owner_id": 2})
 
     assert len(entities) == 2
-    assert entities[0].id == 1
-    assert entities[0].name == "store1"
-    assert entities[1].id == 2
-    assert entities[1].name == "store2"
+    assert entities[0][0].id == 1
+    assert entities[0][0].name == "store1"
+    assert entities[0][0].owner_id == 2
+    assert entities[1][0].id == 2
+    assert entities[1][0].name == "store2"
+    assert entities[1][0].owner_id == 2
 
 
 @pytest.mark.asyncio
-async def test_delete():
-    repository = SQLAlchemyRepository()
-    await repository.add_one({"name": "store"})
+async def test_delete(repository):
+    await repository.add_one({"id": 1, "name": "store1", "owner_id": 2})
 
-    entities = repository.delete({"id": 1})
+    entities = await repository.delete({"id": 1})
 
     assert entities is None
 

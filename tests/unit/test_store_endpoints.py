@@ -54,7 +54,7 @@ def client():
 
 
 def test_create_store(client):
-    response = client.post("/store/store", json={})
+    response = client.post("/store/store")
     assert response.status_code == 200
     assert response.json() == {"id": 1, "name": "store", "owner_id": 1, "paths": []}
 
@@ -133,37 +133,37 @@ def test_add_package(client):
     }
 
 
-# def test_delete_package(client):
-#     client.post("/store/store", json={})
+def test_delete_package(client):
+    client.post("/store/store", json={})
 
-#     client.post("/store/store/package/package", json={})
+    client.post("/store/store/package/package", json={})
 
-#     response = client.delete("/store/store/package/package")
+    response = client.delete("/store/store/package/package")
 
-#     assert response.status_code == 200
-#     assert response.json() == {
-#         "id": 1,
-#         "name": "package",
-#         "store_id": 1,
-#         "closure": {"packages": []},
-#     }
-
-
-# def test_get_paths_difference(client):
-#     response = client.get("/store/store1/difference/store2")
-
-#     assert response.status_code == 200
-#     assert response.json() == {"absent_in_store_1": [], "absent_in_store_2": []}
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": 1,
+        "name": "package",
+        "store_id": 1,
+        "closure": {"packages": []},
+    }
 
 
-# def test_get_closures_difference(client):
-#     response = client.get(
-#         "/store/store1/package/package1/closure-difference/store2/package2"
-#     )
+def test_get_paths_difference(client):
+    response = client.get("/store/store1/difference/store2")
 
-#     assert response.status_code == 200
-#     assert response.json() == {"absent_in_closure_1": [], "absent_in_closure_2": []}
+    assert response.status_code == 200
+    assert response.json() == {"absent_in_store_1": [], "absent_in_store_2": []}
 
 
-# def test_get_package_meta():
-#     pass
+def test_get_closures_difference(client):
+    response = client.get(
+        "/store/store1/package/package1/closure-difference/store2/package2"
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"absent_in_closure_1": [], "absent_in_closure_2": []}
+
+
+def test_get_package_meta():
+    pass

@@ -14,7 +14,7 @@ from src.services.stores import StoreService
 @pytest.fixture
 def store_service():
     with patch(
-        "services.stores.AbstractRepository", new_callable=MagicMock
+        "src.services.stores.AbstractRepository", new_callable=MagicMock
     ) as mock_repo:
         service = StoreService(mock_repo)
         yield service
