@@ -1,6 +1,6 @@
-import pytest
 from unittest.mock import patch
-from src.frontend import register_page, base_url, TIMEOUT
+
+from src.frontend import TIMEOUT, base_url, register_page
 
 
 def test_register_page_success():

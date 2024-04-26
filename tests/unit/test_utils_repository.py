@@ -1,14 +1,14 @@
-import os
 import asyncio
+import os
+
 import pytest
-from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
 
+from src.db.db import async_session_maker, create_db_and_tables  # noqa: E402
 from src.store.models.store import Store  # noqa: E402
 from src.utils.repository import SQLAlchemyRepository  # noqa: E402
-from src.db.db import create_db_and_tables, async_session_maker  # noqa: E402
 
 
 @pytest.fixture

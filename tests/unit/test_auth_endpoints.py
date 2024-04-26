@@ -1,5 +1,6 @@
-import os
 import asyncio
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -7,7 +8,6 @@ os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
 
 from src.app import app  # noqa: E402
 from src.db.db import create_db_and_tables  # noqa: E402
-
 
 EXAMPLE_USER = {
     "email": "user@example.com",

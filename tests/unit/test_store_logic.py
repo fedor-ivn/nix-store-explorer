@@ -1,10 +1,11 @@
-from pathlib import Path
 import shutil
-import pytest
-from unittest.mock import patch, MagicMock
-import src.logic.core as logic
+from pathlib import Path
 from subprocess import CalledProcessError
+from unittest.mock import patch
 
+import pytest
+
+import src.logic.core as logic
 from src.logic.exceptions import (
     AttributeNotProvidedException,
     BrokenPackageException,

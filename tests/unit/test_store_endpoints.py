@@ -1,8 +1,9 @@
-from fastapi.testclient import TestClient
 import asyncio
-import pytest
 import os
 import shutil
+
+import pytest
+from fastapi.testclient import TestClient
 
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
 

@@ -1,4 +1,3 @@
-import random
 from locust import HttpUser, task
 
 USER_1 = {

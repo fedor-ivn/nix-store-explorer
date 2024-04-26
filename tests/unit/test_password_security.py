@@ -1,9 +1,10 @@
-import pytest
-import os
 import asyncio
+import os
+
+import pytest
+from bcrypt import checkpw
 from fastapi.testclient import TestClient
 from sqlalchemy import select
-from bcrypt import checkpw
 
 from src.auth.schemas import User
 
