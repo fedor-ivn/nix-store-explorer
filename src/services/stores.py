@@ -55,7 +55,7 @@ class PackageService:
             raise HTTPException(status_code=500, detail="Unexpected error")
 
         package = {"name": package_name, "store_id": store_id}
-        package_id = await self.repository.add_one(package)
+        package_id = self.repository.add_one(package)
         return package_id
 
     async def get_package(
