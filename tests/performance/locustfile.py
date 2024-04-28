@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from locust import HttpUser, task
 
 USER_1 = {
@@ -20,24 +18,6 @@ USER_2 = {
 
 
 class MyUser(HttpUser):
-    # min_wait = 1000
-    # max_wait = 1000
-    #
-    # def wait_time(self):
-    #     return 0.1
-
-    # @task(1)
-    # def register_users(self):
-    #     r = self.client.post(
-    #         "/auth/register",
-    #         json=USER_1,
-    #     )
-    #
-    #     self.client.post(
-    #         "/auth/register",
-    #         json=USER_2,
-    #     )
-
     @task
     def create_store(self):
         response = self.client.post(
