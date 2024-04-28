@@ -84,7 +84,4 @@ async def test_recoverability(client_server):
 
     stores_database = [store[0].name for store in result.all()]
 
-    print(stores_paths)
-    print(stores_database)
-
     assert set(stores_paths) == set(stores_database)
