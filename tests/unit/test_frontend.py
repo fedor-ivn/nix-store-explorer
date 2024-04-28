@@ -93,7 +93,6 @@ def test_login_page_success():
 
 def test_login_page_failure():
     with ExitStack() as stack:
-
         mock_post = stack.enter_context(patch("src.frontend.requests.post"))
         mock_button = stack.enter_context(patch("src.frontend.st.button"))
         mock_text_input = stack.enter_context(patch("src.frontend.st.text_input"))
@@ -143,7 +142,6 @@ def test_logout_page():
 
 def test_logout_page_failure():
     with ExitStack() as stack:
-
         mock_button = stack.enter_context(patch("src.frontend.st.button"))
         mock_error = stack.enter_context(patch("src.frontend.st.error"))
         mock_post = stack.enter_context(patch("src.frontend.requests.post"))
