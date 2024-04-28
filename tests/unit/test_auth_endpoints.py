@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import os
 
 import pytest
@@ -37,10 +38,8 @@ LOGIN_DATA = {
 def client():
     asyncio.run(create_db_and_tables())
     yield TestClient(app)
-    try:
+    with contextlib.suppress(FileNotFoundError):
         os.remove("test.db")
-    except FileNotFoundError:
-        pass
 
 
 def test_register(client):

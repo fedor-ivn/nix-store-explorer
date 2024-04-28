@@ -92,13 +92,16 @@ def test_install_package_called_process_error(store):
         with pytest.raises(CalledProcessError):
             logic.install_package(store, package_name)
 
+
 def test_install_package_unfree_licence(store):
     package_name = "package_name"
 
     with patch("src.logic.core.run") as mock_run:
         mock_error = CalledProcessError(1, "cmd")
         mock_run.return_value.check_returncode.side_effect = mock_error
-        mock_run.return_value.stderr = "has an unfree license (‘unfree’), refusing to evaluate."
+        mock_run.return_value.stderr = (
+            "has an unfree license (‘unfree’), refusing to evaluate."
+        )
 
         with pytest.raises(UnfreeLicenceException):
             logic.install_package(store, package_name)
@@ -139,7 +142,7 @@ def test_install_package_broken_package(store):
         with pytest.raises(BrokenPackageException):
             logic.install_package(store, package_name)
 
-    
+
 def test_install_package_insecure_package(store):
     package_name = "package_name"
 
@@ -265,5 +268,3 @@ def test_get_closure(store):
         )
 
         assert set(output) == {"path1", "path2"}
-
-

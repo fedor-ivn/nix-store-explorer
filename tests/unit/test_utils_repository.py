@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import os
 
 import pytest
@@ -18,10 +19,9 @@ def repository():
     repository.model = Store
 
     yield repository
-    try:
+
+    with contextlib.suppress(FileNotFoundError):
         os.remove("test.db")
-    except FileNotFoundError:
-        pass
 
 
 @pytest.mark.asyncio

@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import os
 
 import pytest
@@ -18,10 +19,8 @@ from src.db.db import async_session_maker, create_db_and_tables  # noqa: E402
 def client():
     asyncio.run(create_db_and_tables())
     yield TestClient(app)
-    try:
+    with contextlib.suppress(FileNotFoundError):
         os.remove("test.db")
-    except FileNotFoundError:
-        pass
 
 
 @pytest.mark.asyncio

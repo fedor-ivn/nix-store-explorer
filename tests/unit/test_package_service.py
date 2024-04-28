@@ -1,27 +1,18 @@
-import os
-import shutil
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch, call
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi import HTTPException
 
-from src.auth.schemas import User
 from src.logic.exceptions import (
     AttributeNotProvidedException,
     BrokenPackageException,
     InsecurePackageException,
     NotAvailableOnHostPlatformException,
-    PackageNotInstalledException,
-    StillAliveException,
     UnfreeLicenceException,
 )
-from src.store.models.package import Package
 from src.services.stores import PackageService
-from src.store.models.store import Store
-from src.store.schemas.package import Package as PackageSchema
-from src.store.schemas.store import Store as StoreSchema
-from src.store.schemas.package import ClosuresDifference, PackageMeta, Closure
+from src.store.models.package import Package
 
 
 @pytest.fixture
@@ -46,7 +37,9 @@ async def test_add_package(package_service):
         package_id = await service.add_package(Path("store"), "package", 1)
 
         assert package_id == 1
-        service.repository.add_one.assert_called_once_with({"name": "package", "store_id": 1})
+        service.repository.add_one.assert_called_once_with(
+            {"name": "package", "store_id": 1}
+        )
         mock_install.assert_called_once_with(Path("store"), "package")
 
 
@@ -86,7 +79,10 @@ async def test_add_package_not_available_on_host_platform(package_service):
             await service.add_package(Path("store"), "package", 1)
 
             assert exc.value.status_code == 400
-            assert exc.value.detail == "Package package is not available on your host platform!"
+            assert (
+                exc.value.detail
+                == "Package package is not available on your host platform!"
+            )
 
 
 @pytest.mark.asyncio
@@ -137,8 +133,10 @@ async def test_get_package_none(package_service):
 
     package = await service.get_package("package", 1)
 
-    assert package == None
-    service.repository.get_one.assert_called_once_with({"name": "package", "store_id": 1})
+    assert package is None
+    service.repository.get_one.assert_called_once_with(
+        {"name": "package", "store_id": 1}
+    )
 
 
 @pytest.mark.asyncio
@@ -146,7 +144,9 @@ async def test_get_package(package_service):
     service = package_service
 
     service.repository.get_one = AsyncMock()
-    service.repository.get_one.return_value = [Package(id=1, name="package", store_id=1)]
+    service.repository.get_one.return_value = [
+        Package(id=1, name="package", store_id=1)
+    ]
 
     package = await service.get_package("package", 1)
 
@@ -154,7 +154,9 @@ async def test_get_package(package_service):
     assert package.name == "package"
     assert package.store_id == 1
 
-    service.repository.get_one.assert_called_once_with({"name": "package", "store_id": 1})
+    service.repository.get_one.assert_called_once_with(
+        {"name": "package", "store_id": 1}
+    )
 
 
 @pytest.mark.asyncio
@@ -166,8 +168,10 @@ async def test_delete_package_none(package_service):
 
     package = await service.delete_package("package", 1)
 
-    assert package == None
-    service.repository.get_one.assert_called_once_with({"name": "package", "store_id": 1})
+    assert package is None
+    service.repository.get_one.assert_called_once_with(
+        {"name": "package", "store_id": 1}
+    )
 
 
 @pytest.mark.asyncio
@@ -175,7 +179,9 @@ async def test_delete_package(package_service):
     service = package_service
 
     service.repository.get_one = AsyncMock()
-    service.repository.get_one.return_value = [Package(id=1, name="package", store_id=1)]
+    service.repository.get_one.return_value = [
+        Package(id=1, name="package", store_id=1)
+    ]
 
     service.repository.delete = AsyncMock()
 
@@ -185,5 +191,9 @@ async def test_delete_package(package_service):
     assert package.name == "package"
     assert package.store_id == 1
 
-    service.repository.get_one.assert_called_once_with({"name": "package", "store_id": 1})
-    service.repository.delete.assert_called_once_with({"name": "package", "store_id": 1})
+    service.repository.get_one.assert_called_once_with(
+        {"name": "package", "store_id": 1}
+    )
+    service.repository.delete.assert_called_once_with(
+        {"name": "package", "store_id": 1}
+    )
