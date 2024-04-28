@@ -32,7 +32,7 @@ def remove_store(store: Path):
         if exception_type != PermissionError:
             raise error
 
-        Path(path).chmod(0o755)
+        Path(path).parent.chmod(0o755)
         function(path)
 
     rmtree(store, onerror=handle_permission_error)
