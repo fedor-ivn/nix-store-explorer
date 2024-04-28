@@ -94,7 +94,6 @@ def remove_package(store: Path, package_name: str):
         str(store),
         f"nixpkgs#{package_name}",
     )
-
     try:
         process.check_returncode()
     except CalledProcessError:
