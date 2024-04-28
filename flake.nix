@@ -18,6 +18,7 @@
         api = mkPoetryApplication {
           projectDir = self;
           groups = [ "api" ];
+          checkGroups = [ ];
         };
 
         uiEnv = (mkPoetryApplication {
