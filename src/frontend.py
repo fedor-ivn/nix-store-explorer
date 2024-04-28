@@ -98,6 +98,25 @@ def main_page():
         else:
             st.error("Failed to delete package")
 
+    st.header("Get all stores")
+    if st.button("Get all stores"):
+        cookies = st.session_state["Set_cookies"]
+        response = requests.get(
+            f"{base_url}/store",
+            cookies=cookies,
+            timeout=TIMEOUT,
+        )
+        if response.status_code == 200:
+            stores = response.json()
+            st.write("Stores:")
+            for store in stores:
+                st.write(f"Store ID: {store['id']}")
+                st.write(f"Store name: {store['name']}")
+                st.write(f"Owner ID: {store['owner_id']}")
+                st.write("---")
+        else:
+            st.error("Failed to get stores")
+
     st.header("Get package meta")
     store_name = st.text_input(
         "Enter store name", key="get_package_meta_store_name_input"
