@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from sqlalchemy import Row, insert, select
+from sqlalchemy import Row, select
 from sqlalchemy import delete as sqlalchemy_delete
 
 from src.db.db import async_session_maker
