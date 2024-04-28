@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 from subprocess import CalledProcessError
 from unittest.mock import patch
+import tempfile
 
 import pytest
 
@@ -19,10 +20,10 @@ from src.logic.exceptions import (
 
 @pytest.fixture
 def store():
-    store = Path("stores")
-    store.mkdir()
-    yield store
-    shutil.rmtree("stores", ignore_errors=True)
+    with tempfile.TemporaryDirectory() as tempdir:
+        store = Path(tempdir) / "stores"
+        store.mkdir()
+        yield store
 
 
 def test_create_store(store):
@@ -52,9 +53,9 @@ def test_remove_store_no_store(store):
 
 
 def test_get_paths(store):
-    Path("stores/nix/store").mkdir(parents=True)
-    Path("stores/nix/store/file1").touch(exist_ok=True)
-    Path("stores/nix/store/file2").touch(exist_ok=True)
+    (store / "nix/store").mkdir(parents=True)
+    (store / "nix/store/file1").touch(exist_ok=True)
+    (store / "nix/store/file2").touch(exist_ok=True)
 
     paths = logic.get_paths(store)
     assert paths == {"/nix/store/file1", "/nix/store/file2"}
