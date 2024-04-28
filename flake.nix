@@ -18,6 +18,7 @@
         api = mkPoetryApplication {
           projectDir = self;
           groups = [ "api" ];
+          checkGroups = [ ];
         };
 
         uiEnv = (mkPoetryApplication {
@@ -65,27 +66,17 @@
             poetry run pyright
           '';
         };
-
-        tests = pkgs.writeShellApplication {
-          name = "run-tests";
-          runtimeInputs = [ api.dependencyEnv ];
-          text = "pytest";
-        };
       in {
         packages = {
-          inherit api ui tests ci-bandit ci-ruff ci-pyright;
+          inherit api ui ci-bandit ci-ruff ci-pyright;
           default = api;
         };
         devShells.default = with pkgs; mkShell {
-          inputsFrom = [
-            api
-          ];
+          LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib";
           packages = [
             poetry
             ruff
             nodePackages.pyright
-
-            ui
           ];
           shellHook = "source $(poetry env info --path)/bin/activate";
         };
