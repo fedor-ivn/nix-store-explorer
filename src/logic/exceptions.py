@@ -24,3 +24,7 @@ class StillAliveException(Exception):
 
 class PackageNotInstalledException(Exception):
     pass
+
+
+class StoreFolderDoesNotExistException(Exception):
+    pass

@@ -13,6 +13,7 @@ from src.logic.exceptions import (
     PackageNotInstalledException,
     StillAliveException,
     UnfreeLicenceException,
+    StoreFolderDoesNotExistException,
 )
 from src.store.models.package import Package
 from src.store.models.store import Store
@@ -134,7 +135,11 @@ class StoreService:
         await self.store_repository.delete(filter_by)
 
         store_path = self.stores_path / str(user.id) / name
-        core_logic.remove_store(store_path)
+
+        try:
+            core_logic.remove_store(store_path)
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail=f"Store {name} was not found locally!")
 
         return store
 
@@ -210,8 +215,15 @@ class StoreService:
         store_1_path: Path = self.stores_path / str(user.id) / store_1_name
         store_2_path: Path = self.stores_path / str(user.id) / store_2_name
 
-        store_1_paths: set[str] = core_logic.get_paths(store_1_path)
-        store_2_paths: set[str] = core_logic.get_paths(store_2_path)
+        try:
+            store_1_paths: set[str] = core_logic.get_paths(store_1_path)
+        except StoreFolderDoesNotExistException:
+            raise HTTPException(status_code=400, detail=f"Store {store_1_name} does not exist!")
+
+        try:
+            store_2_paths: set[str] = core_logic.get_paths(store_2_path)
+        except StoreFolderDoesNotExistException:
+            raise HTTPException(status_code=400, detail=f"Store {store_2_name} does not exist!")
 
         difference_1: list[str] = list(store_1_paths - store_2_paths)
         difference_2: list[str] = list(store_2_paths - store_1_paths)

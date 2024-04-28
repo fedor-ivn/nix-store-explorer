@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 from shutil import rmtree
 from subprocess import CalledProcessError, run  # nosec import_subprocess
@@ -11,6 +12,7 @@ from src.logic.exceptions import (
     PackageNotInstalledException,
     StillAliveException,
     UnfreeLicenceException,
+    StoreFolderDoesNotExistException,
 )
 
 
@@ -39,11 +41,17 @@ def remove_store(store: Path):
 
 
 def get_paths(store: Path):
-    return set(
-        f"/nix/store/{path.name}"
-        for path in (store / "nix/store").iterdir()
-        if path.name != ".links"
-    )
+    try:
+        return set(
+            f"/nix/store/{path.name}"
+            for path in (store / "nix/store").iterdir()
+            if path.name != ".links"
+        )
+    except FileNotFoundError:
+        if os.path.exists(store):
+            return set()
+        else:
+            raise StoreFolderDoesNotExistException()
 
 
 def install_package(store: Path, package_name: str):
