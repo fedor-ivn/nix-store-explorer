@@ -13,10 +13,10 @@ from src.store.schemas.package import (
     PackageMeta,
 )
 
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 
 from src.app import app  # noqa: E402
-from src.db.db import create_db_and_tables  # noqa: E402
+from src.db.db import create_db_and_tables, engine  # noqa: E402
 
 
 @pytest.fixture
@@ -54,8 +54,7 @@ def client():
 
     yield client
 
-    with contextlib.suppress(FileNotFoundError):
-        os.remove("test.db")
+    asyncio.run(engine.dispose())
 
     shutil.rmtree("stores", ignore_errors=True)
 

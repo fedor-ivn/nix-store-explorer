@@ -5,10 +5,10 @@ import os
 import pytest
 from fastapi.testclient import TestClient
 
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 
 from src.app import app  # noqa: E402
-from src.db.db import create_db_and_tables  # noqa: E402
+from src.db.db import create_db_and_tables, engine  # noqa: E402
 
 EXAMPLE_USER = {
     "email": "user@example.com",
@@ -38,8 +38,7 @@ LOGIN_DATA = {
 def client():
     asyncio.run(create_db_and_tables())
     yield TestClient(app)
-    with contextlib.suppress(FileNotFoundError):
-        os.remove("test.db")
+    asyncio.run(engine.dispose())
 
 
 def test_register(client):

@@ -1,13 +1,12 @@
 import asyncio
-import contextlib
 import os
 
 import pytest
 from sqlalchemy import select
 
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 
-from src.db.db import async_session_maker, create_db_and_tables  # noqa: E402
+from src.db.db import async_session_maker, create_db_and_tables, engine  # noqa: E402
 from src.store.models.store import Store  # noqa: E402
 from src.utils.repository import SQLAlchemyRepository  # noqa: E402
 
@@ -20,8 +19,7 @@ def repository():
 
     yield repository
 
-    with contextlib.suppress(FileNotFoundError):
-        os.remove("test.db")
+    asyncio.run(engine.dispose())
 
 
 @pytest.mark.asyncio
