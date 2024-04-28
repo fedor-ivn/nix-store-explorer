@@ -1,9 +1,8 @@
 **/__pycache__/
-
 .direnv
-
 .idea/
-
 stores/
-
-database.db
+**/database.db
+**/.pytest_cache
+**/.coverage
+.vscode

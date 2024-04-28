@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from sqlalchemy import Row, insert, select
+from sqlalchemy import Row, select
 from sqlalchemy import delete as sqlalchemy_delete
 
 from src.db.db import async_session_maker
@@ -30,16 +30,11 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def add_one(self, data: dict) -> int:
         async with async_session_maker() as session:
-            stmt = (
-                insert(self.model)  # type: ignore
-                .values(**data)
-                .returning(
-                    self.model.id  # type: ignore
-                )
-            )
-            result = await session.execute(stmt)
+            new_entry = self.model(**data)  # type: ignore
+            session.add(new_entry)
             await session.commit()
-            return result.scalar_one()
+            await session.refresh(new_entry)
+            return new_entry.id
 
     async def get_all(self, filter_by: dict) -> Sequence[Row]:
         async with async_session_maker() as session:
