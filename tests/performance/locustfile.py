@@ -18,38 +18,286 @@ USER_2 = {
 
 
 class MyUser(HttpUser):
-    min_wait = 1000
-    max_wait = 1000
+    token = None
 
-    def wait_time(self):
-        return 0.1
+    def on_start(self):
+        with self.client.post(
+            "/auth/register", json=USER_1, catch_response=True
+        ) as response:
+            if response.status_code not in [201, 400]:
+                response.failure("Unexpected error")
+            response.success()
 
-    @task(1)
-    def register_users(self):
-        self.client.post(
-            "/auth/register",
-            json=USER_1,
-        )
-
-        self.client.post(
-            "/auth/register",
-            json=USER_2,
-        )
-
-    @task(2)
-    def create_store(self):
         response = self.client.post(
             "/auth/jwt/login",
             data={"username": USER_1["email"], "password": USER_1["password"]},
         )
-        token = response.cookies["fastapiusersauth"]
-        self.client.post("/store/store", cookies={"fastapiusersauth": token})
+        self.token = response.cookies["fastapiusersauth"]
 
-    @task(3)
+    @task
+    def create_store(self):
+        with self.client.post(
+            "/store/store",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.delete(
+            "/store/store",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+    @task
     def get_all_stores(self):
-        response = self.client.post(
-            "/auth/jwt/login",
-            data={"username": USER_2["email"], "password": USER_2["password"]},
-        )
-        token = response.cookies["fastapiusersauth"]
-        self.client.get("/store", cookies={"fastapiusersauth": token})
+        with self.client.post(
+            "/store/store",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        self.client.get("/store", cookies={"fastapiusersauth": self.token})
+
+        with self.client.delete(
+            "/store/store",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+    @task
+    def get_specific_store(self):
+        with self.client.post(
+            "/store/store",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.get(
+            "/store/store",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.delete(
+            "/store/store",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+    @task
+    def work_with_package(self):
+        with self.client.post(
+            "/store/store",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.post(
+            "/store/store/package/hello",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.delete(
+            "/store/store/package/hello",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.delete(
+            "/store/store",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+    @task
+    def get_paths_difference(self):
+        with self.client.post(
+            "/store/store1",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.post(
+            "/store/store1/package/hello",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.post(
+            "/store/store2",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.post(
+            "/store/store2/package/stdenv",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.get(
+            "/store/store1/difference/store_2",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.delete(
+            "/store/store1",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.delete(
+            "/store/store2",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+    @task
+    def get_closures_difference(self):
+        with self.client.post(
+            "/store/store1",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.post(
+            "/store/store1/package/hello",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.post(
+            "/store/store2",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.post(
+            "/store/store2/package/stdenv",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.get(
+            "/store/store1/package/hello/closure-difference/store2/stdenv",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.delete(
+            "/store/store1",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.delete(
+            "/store/store2",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+    @task
+    def get_package_meta(self):
+        with self.client.post(
+            "/store/store1",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.get(
+            "/store/store2/package/stdenv",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 404]:
+                response.failure("Unexpected error")
+            response.success()
+
+        with self.client.delete(
+            "/store/store1",
+            cookies={"fastapiusersauth": self.token},
+            catch_response=True,
+        ) as response:
+            if response.status_code not in [200, 400]:
+                response.failure("Unexpected error")
+            response.success()
