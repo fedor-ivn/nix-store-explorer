@@ -9,11 +9,11 @@ from src.logic.exceptions import (
     BrokenPackageException,
     InsecurePackageException,
     NotAvailableOnHostPlatformException,
+    NotValidPathException,
     PackageNotInstalledException,
     StillAliveException,
-    UnfreeLicenceException,
     StoreFolderDoesNotExistException,
-    NotValidPathException,
+    UnfreeLicenceException,
 )
 
 
