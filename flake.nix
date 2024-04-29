@@ -93,6 +93,9 @@
               --locustfile tests/performance/locustfile.py \
               --host http://localhost:8000 \
               --headless --users 10 --spawn-rate 1 --run-time 1m
+
+            # shellcheck disable=SC2046
+            kill -9 $(jobs -p)
           '';
         };
       in {
