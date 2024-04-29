@@ -173,7 +173,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.post(
-            "/store/store2/package/busybox",
+            "/store/store2/package/stdenv",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -238,7 +238,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.post(
-            "/store/store2/package/busybox",
+            "/store/store2/package/stdenv",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -247,7 +247,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.get(
-            "/store/store1/package/hello/closure-difference/store2/busybox",
+            "/store/store1/package/hello/closure-difference/store2/stdenv",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -285,7 +285,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.get(
-            "/store/store2/package/busybox",
+            "/store/store2/package/stdenv",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
