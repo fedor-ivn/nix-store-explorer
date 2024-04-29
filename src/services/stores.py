@@ -140,7 +140,9 @@ class StoreService:
         try:
             core_logic.remove_store(store_path)
         except FileNotFoundError:
-            raise HTTPException(status_code=404, detail=f"Store {name} was not found locally!")
+            raise HTTPException(
+                status_code=404, detail=f"Store {name} was not found locally!"
+            )
 
         return store
 
@@ -219,12 +221,16 @@ class StoreService:
         try:
             store_1_paths: set[str] = core_logic.get_paths(store_1_path)
         except StoreFolderDoesNotExistException:
-            raise HTTPException(status_code=400, detail=f"Store {store_1_name} does not exist!")
+            raise HTTPException(
+                status_code=400, detail=f"Store {store_1_name} does not exist!"
+            )
 
         try:
             store_2_paths: set[str] = core_logic.get_paths(store_2_path)
         except StoreFolderDoesNotExistException:
-            raise HTTPException(status_code=400, detail=f"Store {store_2_name} does not exist!")
+            raise HTTPException(
+                status_code=400, detail=f"Store {store_2_name} does not exist!"
+            )
 
         difference_1: list[str] = list(store_1_paths - store_2_paths)
         difference_2: list[str] = list(store_2_paths - store_1_paths)
@@ -243,16 +249,23 @@ class StoreService:
         store_2_path: Path = self.stores_path / str(user.id) / other_store_name
 
         try:
-            closure_1: set[str] = set(core_logic.get_closure(store_1_path, package_name))
+            closure_1: set[str] = set(
+                core_logic.get_closure(store_1_path, package_name)
+            )
         except NotValidPathException:
-            raise HTTPException(status_code=400, detail=f"Package {package_name} has an invalid path!")
+            raise HTTPException(
+                status_code=400, detail=f"Package {package_name} has an invalid path!"
+            )
 
         try:
             closure_2: set[str] = set(
                 core_logic.get_closure(store_2_path, other_package_name)
             )
         except NotValidPathException:
-            raise HTTPException(status_code=400, detail=f"Package {other_package_name} has an invalid path!")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Package {other_package_name} has an invalid path!",
+            )
 
         difference_1: list[str] = list(closure_1 - closure_2)
         difference_2: list[str] = list(closure_2 - closure_1)
