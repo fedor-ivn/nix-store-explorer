@@ -10,9 +10,10 @@ jobs:
       - uses: nixbuild/nix-quick-install-action@v27
       - uses: nix-community/cache-nix-action@v5
         with:
-          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
-      - run: nix develop --command poetry install --with api,ui
-      - run: nix develop --command poetry run pytest --cov=src --cov-branch --cov-fail-under=60
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock', 'pyproject.toml', 'poetry.lock') }}
+          paths: |
+            ~/.cache/pypoetry
+      - run: nix run .#ci-tests
 
   ruff:
     runs-on: ubuntu-latest
