@@ -9,10 +9,10 @@ import uvicorn
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 
 from src.app import app  # noqa: E402
-from src.db.db import async_session_maker, create_db_and_tables  # noqa: E402
+from src.db.db import async_session_maker, create_db_and_tables, engine  # noqa: E402
 from src.store.models.store import Store  # noqa: E402
 
 
@@ -59,11 +59,9 @@ def client_server():
     server.should_exit = True
     thread.join()
 
-    # Suppressing the error
-    with suppress(Exception):
-        server.shutdown()
 
-    os.remove("test.db")
+    asyncio.run(engine.dispose())
+
     shutil.rmtree("stores", ignore_errors=True)
 
 
