@@ -2,7 +2,6 @@ import asyncio
 import os
 import shutil
 import threading
-from contextlib import suppress
 
 import pytest
 import uvicorn
