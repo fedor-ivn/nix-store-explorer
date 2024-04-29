@@ -13,6 +13,7 @@ from src.logic.exceptions import (
     StillAliveException,
     UnfreeLicenceException,
     StoreFolderDoesNotExistException,
+    NotValidPathException,
 )
 
 
@@ -134,7 +135,12 @@ def get_closure(store: Path, package_name: str) -> list[str]:
         "--recursive",
         f"nixpkgs#{package_name}",
     )
-    process.check_returncode()
+    try:
+        process.check_returncode()
+    except CalledProcessError as e:
+        if "is not valid" in process.stderr:
+            raise NotValidPathException()
+        raise e
 
     output = json.loads(process.stdout)
     _check_paths_are_valid(output)

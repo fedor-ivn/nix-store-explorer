@@ -28,3 +28,7 @@ class PackageNotInstalledException(Exception):
 
 class StoreFolderDoesNotExistException(Exception):
     pass
+
+
+class NotValidPathException(Exception):
+    pass

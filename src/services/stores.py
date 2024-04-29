@@ -14,6 +14,7 @@ from src.logic.exceptions import (
     StillAliveException,
     UnfreeLicenceException,
     StoreFolderDoesNotExistException,
+    NotValidPathException,
 )
 from src.store.models.package import Package
 from src.store.models.store import Store
@@ -241,10 +242,17 @@ class StoreService:
         store_1_path: Path = self.stores_path / str(user.id) / store_name
         store_2_path: Path = self.stores_path / str(user.id) / other_store_name
 
-        closure_1: set[str] = set(core_logic.get_closure(store_1_path, package_name))
-        closure_2: set[str] = set(
-            core_logic.get_closure(store_2_path, other_package_name)
-        )
+        try:
+            closure_1: set[str] = set(core_logic.get_closure(store_1_path, package_name))
+        except NotValidPathException:
+            raise HTTPException(status_code=400, detail=f"Package {package_name} has an invalid path!")
+
+        try:
+            closure_2: set[str] = set(
+                core_logic.get_closure(store_2_path, other_package_name)
+            )
+        except NotValidPathException:
+            raise HTTPException(status_code=400, detail=f"Package {other_package_name} has an invalid path!")
 
         difference_1: list[str] = list(closure_1 - closure_2)
         difference_2: list[str] = list(closure_2 - closure_1)
