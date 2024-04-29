@@ -18,6 +18,12 @@ USER_2 = {
 
 
 class MyUser(HttpUser):
+    def on_start(self):
+        with self.client.post("/auth/register", json=USER_1, catch_response=True) as response:
+            if response.status_code not in [201, 400]:
+                response.failure("Unexpected error")
+            response.success()
+
     @task
     def create_store(self):
         response = self.client.post(
