@@ -1,12 +1,14 @@
 import asyncio
 import os
-import shutil
 import sqlite3
 import threading
+from pathlib import Path
 
 import pytest
 import uvicorn
 from fastapi.testclient import TestClient
+
+from src.logic.core import remove_store
 
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 
@@ -59,26 +61,24 @@ def client_server():
 
     asyncio.run(engine.dispose())
 
-    shutil.rmtree("stores", ignore_errors=True)
+    remove_store(Path("stores/1/store"))
 
 
 @pytest.mark.asyncio
 async def test_recoverability(client_server):
     client, server = client_server
 
-    for i in range(1, 2):
-        client.post(f"/store/store_{i}")
-        client.post(f"/store/store_{i}/package/hello")
+    client.post("/store/store")
+    client.post("/store/store/package/hello")
 
     server.should_exit = True
 
-    for i in range(1, 2):
-        with sqlite3.connect(f"./stores/1/store_{i}/nix/var/nix/db/db.sqlite") as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM validpaths")
+    with sqlite3.connect("./stores/1/store/nix/var/nix/db/db.sqlite") as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM validpaths")
 
-            rows = cursor.fetchall()
+        rows = cursor.fetchall()
 
-            for row in rows:
-                path = f"./stores/1/store_{i}" + row[1]
-                assert os.path.exists(path)
+        for row in rows:
+            path = "./stores/1/store" + row[1]
+            assert os.path.exists(path)
