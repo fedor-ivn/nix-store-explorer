@@ -75,7 +75,7 @@ async def test_recoverability(client_server):
     for i in range(1, 2):
         with sqlite3.connect(f"./stores/1/store_{i}/nix/var/nix/db/db.sqlite") as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT * FROM validpaths')
+            cursor.execute("SELECT * FROM validpaths")
 
             rows = cursor.fetchall()
 
