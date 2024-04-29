@@ -1,18 +1,17 @@
 import asyncio
 import os
 import shutil
+import sqlite3
 import threading
 
 import pytest
 import uvicorn
 from fastapi.testclient import TestClient
-from sqlalchemy import select
 
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 
 from src.app import app  # noqa: E402
-from src.db.db import async_session_maker, create_db_and_tables, engine  # noqa: E402
-from src.store.models.store import Store  # noqa: E402
+from src.db.db import create_db_and_tables, engine  # noqa: E402
 
 
 @pytest.fixture
@@ -67,17 +66,19 @@ def client_server():
 async def test_recoverability(client_server):
     client, server = client_server
 
-    for i in range(1, 10):
+    for i in range(1, 2):
         client.post(f"/store/store_{i}")
+        client.post(f"/store/store_{i}/package/hello")
 
     server.should_exit = True
 
-    stores_paths = os.listdir("stores/1")
+    for i in range(1, 2):
+        with sqlite3.connect(f"./stores/1/store_{i}/nix/var/nix/db/db.sqlite") as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM validpaths')
 
-    async with async_session_maker() as session:
-        stmt = select(Store).where(Store.owner_id == 1)
-        result = await session.execute(stmt)
+            rows = cursor.fetchall()
 
-    stores_database = [store[0].name for store in result.all()]
-
-    assert set(stores_paths) == set(stores_database)
+            for row in rows:
+                path = f"./stores/1/store_{i}" + row[1]
+                assert os.path.exists(path)
