@@ -1,4 +1,4 @@
-from locust import HttpUser, task
+from locust import HttpUser, task, events
 
 USER_1 = {
     "email": "user1@example.com",
@@ -117,7 +117,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.post(
-            "/store/store/package/python3",
+            "/store/store/package/hello",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -126,7 +126,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.delete(
-            "/store/store/package/python3",
+            "/store/store/package/hello",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -155,7 +155,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.post(
-            "/store/store1/package/python3",
+            "/store/store1/package/hello",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -173,7 +173,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.post(
-            "/store/store2/package/neovim",
+            "/store/store2/package/busybox",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -220,7 +220,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.post(
-            "/store/store1/package/python3",
+            "/store/store1/package/hello",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -238,7 +238,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.post(
-            "/store/store2/package/neovim",
+            "/store/store2/package/busybox",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -247,7 +247,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.get(
-            "/store/store1/package/python3/closure-difference/store2/neovim",
+            "/store/store1/package/hello/closure-difference/store2/busybox",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
@@ -285,7 +285,7 @@ class MyUser(HttpUser):
             response.success()
 
         with self.client.get(
-            "/store/store2/package/neovim",
+            "/store/store2/package/busybox",
             cookies={"fastapiusersauth": self.token},
             catch_response=True,
         ) as response:
