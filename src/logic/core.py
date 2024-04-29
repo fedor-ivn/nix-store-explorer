@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 from shutil import rmtree
 from subprocess import CalledProcessError, run  # nosec import_subprocess
@@ -8,8 +9,10 @@ from src.logic.exceptions import (
     BrokenPackageException,
     InsecurePackageException,
     NotAvailableOnHostPlatformException,
+    NotValidPathException,
     PackageNotInstalledException,
     StillAliveException,
+    StoreFolderDoesNotExistException,
     UnfreeLicenceException,
 )
 
@@ -39,11 +42,17 @@ def remove_store(store: Path):
 
 
 def get_paths(store: Path):
-    return set(
-        f"/nix/store/{path.name}"
-        for path in (store / "nix/store").iterdir()
-        if path.name != ".links"
-    )
+    try:
+        return set(
+            f"/nix/store/{path.name}"
+            for path in (store / "nix/store").iterdir()
+            if path.name != ".links"
+        )
+    except FileNotFoundError:
+        if os.path.exists(store):
+            return set()
+        else:
+            raise StoreFolderDoesNotExistException()
 
 
 def install_package(store: Path, package_name: str):
@@ -86,7 +95,6 @@ def remove_package(store: Path, package_name: str):
         str(store),
         f"nixpkgs#{package_name}",
     )
-
     try:
         process.check_returncode()
     except CalledProcessError:
@@ -127,7 +135,12 @@ def get_closure(store: Path, package_name: str) -> list[str]:
         "--recursive",
         f"nixpkgs#{package_name}",
     )
-    process.check_returncode()
+    try:
+        process.check_returncode()
+    except CalledProcessError as e:
+        if "is not valid" in process.stderr:
+            raise NotValidPathException()
+        raise e
 
     output = json.loads(process.stdout)
     _check_paths_are_valid(output)

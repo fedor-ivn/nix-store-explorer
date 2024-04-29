@@ -18,6 +18,7 @@
         api = mkPoetryApplication {
           projectDir = self;
           groups = [ "api" ];
+          checkGroups = [ ];
         };
 
         uiEnv = (mkPoetryApplication {
@@ -66,26 +67,48 @@
           '';
         };
 
-        tests = pkgs.writeShellApplication {
-          name = "run-tests";
-          runtimeInputs = [ api.dependencyEnv ];
-          text = "pytest";
+        ci-tests = pkgs.writeShellApplication {
+          name = "ci-tests";
+          runtimeInputs = [ pkgs.poetry ];
+          text = ''
+            set -x
+            export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib"
+            poetry install --with api,ui
+            poetry run pytest --cov=src --cov-branch --cov-fail-under=60 tests
+          '';
+        };
+
+        ci-locust = pkgs.writeShellApplication {
+          name = "ci-tests";
+          runtimeInputs = [ pkgs.poetry ];
+          text = ''
+            set -x
+            export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib"
+            poetry install --with api
+
+            poetry run nix-store-explorer >/dev/null 2>&1 &
+            until curl http://localhost:8000; do :; done >/dev/null 2>&1
+
+            poetry run locust \
+              --locustfile tests/performance/locustfile.py \
+              --host http://localhost:8000 \
+              --headless --users 10 --spawn-rate 1 --run-time 1m
+
+            # shellcheck disable=SC2046
+            kill -9 $(jobs -p)
+          '';
         };
       in {
         packages = {
-          inherit api ui tests ci-bandit ci-ruff ci-pyright;
+          inherit api ui ci-bandit ci-ruff ci-pyright ci-tests ci-locust;
           default = api;
         };
         devShells.default = with pkgs; mkShell {
-          inputsFrom = [
-            api
-          ];
+          LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib";
           packages = [
             poetry
             ruff
             nodePackages.pyright
-
-            ui
           ];
           shellHook = "source $(poetry env info --path)/bin/activate";
         };
