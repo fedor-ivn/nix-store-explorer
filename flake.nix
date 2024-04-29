@@ -66,9 +66,20 @@
             poetry run pyright
           '';
         };
+
+        ci-tests = pkgs.writeShellApplication {
+          name = "ci-tests";
+          runtimeInputs = [ pkgs.poetry ];
+          text = ''
+            set -x
+            export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib"
+            poetry install --with api,ui
+            poetry run pytest --cov=src --cov-branch --cov-fail-under=60 tests
+          '';
+        };
       in {
         packages = {
-          inherit api ui ci-bandit ci-ruff ci-pyright;
+          inherit api ui ci-bandit ci-ruff ci-pyright ci-tests;
           default = api;
         };
         devShells.default = with pkgs; mkShell {
