@@ -1,5 +1,6 @@
 **/__pycache__/
 .direnv
+result
 .idea/
 stores/
 **/database.db
