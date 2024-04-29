@@ -10,11 +10,11 @@ from src.logic.exceptions import (
     BrokenPackageException,
     InsecurePackageException,
     NotAvailableOnHostPlatformException,
+    NotValidPathException,
     PackageNotInstalledException,
     StillAliveException,
-    UnfreeLicenceException,
     StoreFolderDoesNotExistException,
-    NotValidPathException,
+    UnfreeLicenceException,
 )
 from src.store.models.package import Package
 from src.store.models.store import Store
