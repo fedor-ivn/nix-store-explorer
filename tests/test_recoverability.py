@@ -59,7 +59,6 @@ def client_server():
     server.should_exit = True
     thread.join()
 
-
     asyncio.run(engine.dispose())
 
     shutil.rmtree("stores", ignore_errors=True)
