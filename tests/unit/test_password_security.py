@@ -1,5 +1,4 @@
 import asyncio
-import contextlib
 import os
 
 import pytest
@@ -9,7 +8,7 @@ from sqlalchemy import select
 
 from src.auth.schemas import User
 
-os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///test.db"
+os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 
 from src.app import app  # noqa: E402
 from src.db.db import async_session_maker, create_db_and_tables  # noqa: E402
@@ -19,8 +18,7 @@ from src.db.db import async_session_maker, create_db_and_tables  # noqa: E402
 def client():
     asyncio.run(create_db_and_tables())
     yield TestClient(app)
-    with contextlib.suppress(FileNotFoundError):
-        os.remove("test.db")
+    asyncio.run(async_session_maker().close())
 
 
 @pytest.mark.asyncio
