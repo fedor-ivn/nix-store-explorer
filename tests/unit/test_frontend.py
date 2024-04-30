@@ -685,16 +685,16 @@ def test_main_page_get_closures_difference():
         return False
 
     def text_input_side_effect(*args, **kwargs):
-        if args[0] == "Enter store name":
+        if args[0] == "Enter store name 1":
             return "store_name"
 
-        if args[0] == "Enter other store name":
+        if args[0] == "Enter store name 2":
             return "other_store_name"
 
-        if args[0] == "Enter package name":
+        if args[0] == "Enter package name 1":
             return "package_name"
 
-        if args[0] == "Enter other package name":
+        if args[0] == "Enter package name 2":
             return "other_package_name"
 
         return ""
@@ -709,18 +709,8 @@ def test_main_page_get_closures_difference():
         mock_button.side_effect = button_side_effect
         mock_get.return_value.status_code = 200
         closures_difference = {
-            "difference": [
-                {
-                    "package_name": "name_1",
-                    "version_update": {"old": "1.0.0", "new": "2.0.0"},
-                    "size_update": 10,
-                },
-                {
-                    "package_name": "name_2",
-                    "version_update": {"old": "1.0.0", "new": "2.0.0"},
-                    "size_update": 10,
-                },
-            ]
+            "absent_in_package_1": ["path1"],
+            "absent_in_package_2": ["path2"],
         }
         mock_get.return_value.json.return_value = closures_difference
         cookies = {"fastapiusersauth", "token"}
@@ -736,17 +726,11 @@ def test_main_page_get_closures_difference():
         )
 
         calls = [
-            call("Closure difference:"),
-            call("Package name: name_1"),
-            call("Version update: 1.0.0 -> 2.0.0"),
-            call("Size update: 10"),
-            call("---"),
-            call("Package name: name_2"),
-            call("Version update: 1.0.0 -> 2.0.0"),
-            call("Size update: 10"),
-            call("---"),
+            call("Absent in package 1:"),
+            call("path1"),
+            call("Absent in package 2:"),
+            call("path2"),
         ]
-
         assert mock_write.call_args_list == calls
 
 
@@ -757,16 +741,16 @@ def test_main_page_get_closures_difference_failure():
         return False
 
     def text_input_side_effect(*args, **kwargs):
-        if args[0] == "Enter store name":
+        if args[0] == "Enter store name 1":
             return "store_name"
 
-        if args[0] == "Enter other store name":
+        if args[0] == "Enter store name 2":
             return "other_store_name"
 
-        if args[0] == "Enter package name":
+        if args[0] == "Enter package name 1":
             return "package_name"
 
-        if args[0] == "Enter other package name":
+        if args[0] == "Enter package name 2":
             return "other_package_name"
 
         return ""
@@ -781,18 +765,8 @@ def test_main_page_get_closures_difference_failure():
         mock_button.side_effect = button_side_effect
         mock_get.return_value.status_code = 400
         closures_difference = {
-            "difference": [
-                {
-                    "package_name": "name_1",
-                    "version_update": {"old": "1.0.0", "new": "2.0.0"},
-                    "size_update": 10,
-                },
-                {
-                    "package_name": "name_2",
-                    "version_update": {"old": "1.0.0", "new": "2.0.0"},
-                    "size_update": 10,
-                },
-            ]
+            "absent_in_package_1": "path1",
+            "absent_in_package_2": "path2",
         }
         mock_get.return_value.json.return_value = closures_difference
         cookies = {"fastapiusersauth", "token"}

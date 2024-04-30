@@ -169,15 +169,17 @@ def main_page():
             st.warning("Please enter both store names")
 
     st.header("Get closures difference")
-    store_name = st.text_input("Enter store name", key="get_closures_store_name_input")
+    store_name = st.text_input(
+        "Enter store name 1", key="get_closures_store_name_input"
+    )
     package_name = st.text_input(
-        "Enter package name", key="get_closures_package_name_input"
+        "Enter package name 1", key="get_closures_package_name_input"
     )
     other_store_name = st.text_input(
-        "Enter other store name", key="get_closures_other_store_name_input"
+        "Enter store name 2", key="get_closures_other_store_name_input"
     )
     other_package_name = st.text_input(
-        "Enter other package name", key="get_closures_other_package_name_input"
+        "Enter package name 2", key="get_closures_other_package_name_input"
     )
     if st.button("Get closures difference"):
         if store_name and package_name and other_store_name and other_package_name:
@@ -189,14 +191,12 @@ def main_page():
             )
             if response.status_code == 200:
                 closures_difference = response.json()
-                st.write("Closure difference:")
-                for change in closures_difference["difference"]:
-                    st.write(f"Package name: {change['package_name']}")
-                    st.write(
-                        f"Version update: {change['version_update']['old']} -> {change['version_update']['new']}"
-                    )
-                    st.write(f"Size update: {change['size_update']}")
-                    st.write("---")
+                st.write("Absent in package 1:")
+                for path in closures_difference["absent_in_package_1"]:
+                    st.write(path)
+                st.write("Absent in package 2:")
+                for path in closures_difference["absent_in_package_2"]:
+                    st.write(path)
             else:
                 st.error("Failed to get closures difference")
         else:
